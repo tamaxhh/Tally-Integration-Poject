@@ -1,0 +1,101 @@
+# docker/docker-compose.yml
+#
+# LOCAL DEVELOPMENT STACK
+# ========================
+# Starts: Node.js API + Redis + PostgreSQL
+#
+# Usage:
+#   docker-compose up -d          # Start all services in background
+#   docker-compose logs -f app    # Follow app logs
+#   docker-compose down           # Stop all services
+#   docker-compose down -v        # Stop and delete volumes (wipes DB data)
+#
+# NOTE: Tally itself runs on your Windows machine — it's not in Docker.
+# The app connects to Tally at host.docker.internal:9000 (see environment below).
+
+version: '3.8'
+
+services:
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+
+      # host.docker.internal resolves to the host machine's IP from inside Docker
+      # This is how the containerised app reaches Tally running on your Windows machine
+      TALLY_HOST: host.docker.internal
+      TALLY_PORT: 9000
+      TALLY_TIMEOUT_MS: 5000
+      TALLY_MAX_RETRIES: 2
+
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/tally_integration
+
+      API_KEYS: dev-key-local-only
+      LOG_LEVEL: debug
+
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+    # Mount source code for hot-reload in development
+    # In production, remove this volume mount
+    volumes:
+      - ./src:/app/src:ro
+
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    # Persist data across restarts
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tally_integration
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Redis Commander — web UI to inspect Redis cache during development
+  # Available at http://localhost:8081
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    ports:
+      - "8081:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    depends_on:
+      - redis
+    profiles:
+      - dev-tools  # Only start with: docker-compose --profile dev-tools up
+
+volumes:
+  redis_data:
+  postgres_data:
