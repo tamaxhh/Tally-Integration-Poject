@@ -18,10 +18,199 @@ async function start() {
     return { status: 'healthy' };
   });
 
+  fastify.get('/live', async (request, reply) => {
+    return { status: 'ok', timestamp: new Date().toISOString() };
+  });
+
+  // Test connection endpoint for frontend
+  fastify.post('/api/test-connection', async (request, reply) => {
+    try {
+      const { tallyUrl } = request.body;
+      const startTime = Date.now();
+      
+      // Test connection to Tally - use the URL as provided from frontend
+      const axios = require('axios');
+      const testXml = `<ENVELOPE><HEADER><TALLYREQUEST>Export Data</TALLYREQUEST></HEADER><BODY><EXPORTDATA><REQUESTDESC><REPORTNAME>List of Companies</REPORTNAME></REQUESTDESC></EXPORTDATA></BODY></ENVELOPE>`;
+      
+      await axios.post(`http://${tallyUrl}`, testXml, {
+        headers: { 'Content-Type': 'text/xml' },
+        timeout: 5000
+      });
+      
+      const responseTime = Date.now() - startTime;
+      
+      return {
+        success: true,
+        connected: true,
+        responseTime: responseTime,
+        message: 'Successfully connected to Tally',
+        tallyUrl: tallyUrl
+      };
+    } catch (error) {
+      return {
+        success: false,
+        connected: false,
+        error: error.message,
+        details: error.code,
+        tallyUrl: request.body?.tallyUrl || 'unknown'
+      };
+    }
+  });
+
+  // Fetch Tally data endpoint for frontend
+  fastify.post('/api/fetch-tally-data', async (request, reply) => {
+    try {
+      const { tallyUrl, requestType, ledgerName, from, to } = request.body;
+      const axios = require('axios');
+      const XMLParser = require('fast-xml-parser').XMLParser;
+      
+      let xmlRequest = '';
+      let endpoint = '';
+      
+      // Build XML request based on request type
+      switch (requestType) {
+        case 'ListOfLedgers':
+          xmlRequest = `<?xml version="1.0" encoding="utf-8"?>
+<ENVELOPE>
+  <HEADER>
+    <VERSION>1</VERSION>
+    <TALLYREQUEST>Export Data</TALLYREQUEST>
+    <TYPE>Collection</TYPE>
+    <ID>List of Ledgers</ID>
+  </HEADER>
+  <BODY>
+    <DESC>
+      <STATICVARIABLES>
+        <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
+      </STATICVARIABLES>
+      <TDL>
+        <TDLMESSAGE>
+          <COLLECTION NAME="List of Ledgers" ISMODIFY="No">
+            <TYPE>Ledger</TYPE>
+            <FETCH>NAME</FETCH>
+          </COLLECTION>
+        </TDLMESSAGE>
+      </TDL>
+    </DESC>
+  </BODY>
+</ENVELOPE>`;
+          endpoint = 'ledgers';
+          break;
+          
+        case 'LedgerDetails':
+          if (!ledgerName) {
+            return reply.code(400).send({
+              success: false,
+              error: 'Ledger name is required for Ledger Details'
+            });
+          }
+          xmlRequest = `<?xml version="1.0" encoding="utf-8"?>
+<ENVELOPE>
+  <HEADER>
+    <VERSION>1</VERSION>
+    <TALLYREQUEST>Export Data</TALLYREQUEST>
+    <TYPE>Collection</TYPE>
+    <ID>Ledger Details</ID>
+  </HEADER>
+  <BODY>
+    <DESC>
+      <STATICVARIABLES>
+        <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
+      </STATICVARIABLES>
+      <TDL>
+        <TDLMESSAGE>
+          <COLLECTION NAME="Ledger Details" ISMODIFY="No">
+            <TYPE>Ledger</TYPE>
+            <FETCH>*</FETCH>
+            <FILTER>NAME = "${ledgerName}"</FILTER>
+          </COLLECTION>
+        </TDLMESSAGE>
+      </TDL>
+    </DESC>
+  </BODY>
+</ENVELOPE>`;
+          endpoint = 'ledger-details';
+          break;
+          
+        case 'TrialBalance':
+          xmlRequest = `<?xml version="1.0" encoding="utf-8"?>
+<ENVELOPE>
+  <HEADER>
+    <VERSION>1</VERSION>
+    <TALLYREQUEST>Export Data</TALLYREQUEST>
+    <TYPE>Collection</TYPE>
+    <ID>Trial Balance</ID>
+  </HEADER>
+  <BODY>
+    <DESC>
+      <STATICVARIABLES>
+        <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
+      </STATICVARIABLES>
+      <TDL>
+        <TDLMESSAGE>
+          <COLLECTION NAME="Trial Balance" ISMODIFY="No">
+            <TYPE>Ledger</TYPE>
+            <FETCH>NAME,OPENINGBALANCE,CLOSINGBALANCE</FETCH>
+          </COLLECTION>
+        </TDLMESSAGE>
+      </TDL>
+    </DESC>
+  </BODY>
+</ENVELOPE>`;
+          endpoint = 'trial-balance';
+          break;
+          
+        default:
+          return reply.code(400).send({
+            success: false,
+            error: 'Invalid request type'
+          });
+      }
+      
+      const startTime = Date.now();
+      const response = await axios.post(`http://${tallyUrl}`, xmlRequest, {
+        headers: { 'Content-Type': 'text/xml' },
+        timeout: 10000
+      });
+      
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix: '@_',
+        parseTagValue: false,
+        isArray: (tagName) => ['LEDGER'].includes(tagName.toUpperCase()),
+        trimValues: true,
+      });
+      
+      const result = parser.parse(response.data);
+      let data = [];
+      
+      // Extract data based on request type
+      if (result.ENVELOPE?.BODY?.DATA?.COLLECTION?.LEDGER) {
+        const ledgerData = result.ENVELOPE.BODY.DATA.COLLECTION.LEDGER;
+        data = Array.isArray(ledgerData) ? ledgerData : [ledgerData];
+      }
+      
+      return {
+        success: true,
+        data: data,
+        requestType: requestType,
+        processingTime: Date.now() - startTime,
+        count: data.length
+      };
+      
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message,
+        details: error.code
+      };
+    }
+  });
+
   // Simple API key check decorator (exclude health endpoints)
   fastify.addHook('preHandler', (req, reply, done) => {
-    // Skip auth for health endpoints
-    if (req.url.startsWith('/health')) {
+    // Skip auth for health endpoints and frontend API endpoints
+    if (req.url.startsWith('/health') || req.url.startsWith('/live') || req.url.startsWith('/api/test-connection') || req.url.startsWith('/api/fetch-tally-data')) {
       return done();
     }
     
@@ -52,7 +241,7 @@ async function start() {
         return reply.code(400).send({ error: 'Ledger name is required' });
       }
       
-      const tallyUrl = "127.0.0.1:9000"; // Hardcoded for debugging
+      const tallyUrl = `${process.env.TALLY_HOST || '127.0.0.1'}:${process.env.TALLY_PORT || 9000}`;
       
       // For now, return mock data structure matching your expected format
       // In production, this would be replaced with actual Tally XML requests
@@ -158,7 +347,7 @@ async function start() {
         return reply.code(401).send({ error: 'Unauthorized', message: 'Valid X-API-Key header required' });
       }
       
-      const tallyUrl = "127.0.0.1:9000"; // Hardcoded for debugging
+      const tallyUrl = `${process.env.TALLY_HOST || '127.0.0.1'}:${process.env.TALLY_PORT || 9000}`;
       
       const { ledgerName } = request.query;
       if (!ledgerName) {
@@ -268,7 +457,7 @@ async function start() {
         });
       }
       
-      const tallyUrl = "127.0.0.1:9000"; // Hardcoded for debugging
+      const tallyUrl = `${process.env.TALLY_HOST || '127.0.0.1'}:${process.env.TALLY_PORT || 9000}`;
       console.log('📡 Connecting to Tally at:', tallyUrl);
       
       // Build XML request for ledgers
@@ -429,7 +618,7 @@ async function start() {
         realError: {
           code: err.code,
           type: err.constructor.name,
-          tallyHost: '127.0.0.1:9000'
+          tallyHost: `${process.env.TALLY_HOST || '127.0.0.1'}:${process.env.TALLY_PORT || 9000}`
         }
       });
     }

@@ -8,9 +8,9 @@
 
 const axios = require('axios');
 
-// Use working debug logic - force IPv4 and exact working config
+// Use environment variables for Tally connection
 const tallyHttp = axios.create({
-  baseURL: 'http://127.0.0.1:9000', // Force IPv4
+  baseURL: `http://${process.env.TALLY_HOST || '127.0.0.1'}:${process.env.TALLY_PORT || 9000}`,
   timeout: 10000,
   headers: {
     'Content-Type': 'text/xml;charset=utf-8',
@@ -19,7 +19,7 @@ const tallyHttp = axios.create({
   responseType: 'text',
 });
 
-console.log("✅ WORKING TALLY CLIENT LOADED - 127.0.0.1:9000");
+console.log(`✅ TALLY CLIENT LOADED - ${process.env.TALLY_HOST || '127.0.0.1'}:${process.env.TALLY_PORT || 9000}`);
 
 async function sendToTally(xmlPayload, options = {}) {
   console.log('CLIENT CALLED - Sending XML to Tally...');
