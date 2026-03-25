@@ -52,30 +52,36 @@ const CACHE_PREFIX = 'tally:ledgers';
  * @returns {Promise<{ ledgers: object[], total: number, fromCache: boolean }>}
  */
 async function getLedgers({ company = '', bypassCache = false } = {}) {
+  console.log('SERVICE CALLED - getLedgers with company:', company);
   const cacheKey = `${CACHE_PREFIX}:${company || 'default'}`;
 
   // Step 1: Try cache (unless explicitly bypassed)
   if (!bypassCache) {
     const cached = await cacheManager.get(cacheKey);
     if (cached) {
-      logger.debug({ cacheKey }, 'Ledger list served from cache');
+      console.log('✅ CACHE HIT');
       return { ...cached, fromCache: true };
     }
   }
 
   // Step 2: Cache miss — build XML request
-  logger.info({ company, cacheKey }, 'Fetching ledger list from Tally');
+  console.log('📦 BUILDING XML...');
   const xmlRequest = buildLedgerListXml({ company });
+  console.log('XML built, length:', xmlRequest.length);
 
   // Step 3: Send to Tally (with built-in retry + circuit breaker)
+  console.log('🚀 CALLING TALLY...');
   const xmlResponse = await sendToTally(xmlRequest);
+  console.log('✅ TALLY RESPONSE RECEIVED, length:', xmlResponse.length);
 
   // Step 4: Parse the XML response into typed JSON
+  console.log('📊 PARSING RESPONSE...');
   const result = parseLedgerList(xmlResponse);
+  console.log('✅ PARSED SUCCESSFULLY -', result.total, 'ledgers found');
 
   // Step 5: Store in cache for future requests
   await cacheManager.set(cacheKey, result, config.redis.ttlSeconds);
-  logger.info({ count: result.total, company }, 'Ledger list fetched and cached');
+  console.log('💾 CACHED RESULT');
 
   return { ...result, fromCache: false };
 }

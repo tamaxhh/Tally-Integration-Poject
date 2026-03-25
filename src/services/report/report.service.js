@@ -12,12 +12,12 @@
 
 'use strict';
 
-const { sendToTally } = require('../../../../services/connectors/tally.client');
-const { buildExportEnvelope } = require('../../../../services/xml/builder/ledger.xml');
-const { parseXml, parseAmount, safeGet, ensureArray } = require('../../../../services/xml/parser/index');
-const cacheManager = require('../../../../cache/simple-cache');
-const config = require('../../../../../config');
-const logger = require('../../../../config/logger');
+const { sendToTally } = require('../connectors/tally.client.js');
+const { buildExportEnvelope } = require('../xml/builder/ledger.xml');
+const { parseXml, parseAmount, safeGet, ensureArray } = require('../xml/parser/index');
+const cacheManager = require('../../cache/simple-cache');
+const config = require('../../config');
+const logger = require('../../config/logger');
 
 const CACHE_PREFIX = 'tally:reports';
 

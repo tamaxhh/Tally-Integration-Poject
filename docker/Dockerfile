@@ -43,6 +43,17 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy application source
 COPY --chown=tally:nodejs src/ ./src/
+COPY --chown=tally:nodejs start-server.js ./
+COPY --chown=tally:nodejs config.js ./
+COPY --chown=tally:nodejs .env.example ./
+
+# Create .env file for container
+RUN echo "NODE_ENV=production" > .env && \
+    echo "PORT=3000" >> .env && \
+    echo "HOST=0.0.0.0" >> .env && \
+    echo "TALLY_HOST=host.docker.internal" >> .env && \
+    echo "TALLY_PORT=9000" >> .env && \
+    echo "API_KEYS=dev-key-local-only" >> .env
 
 # Switch to non-root user
 USER tally
@@ -51,9 +62,8 @@ USER tally
 EXPOSE 3000
 
 # Health check — Docker will mark the container unhealthy if this fails
-# 3 retries at 10s intervals before marking unhealthy
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3000/health/live', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+  CMD node -e "require('http').get('http://localhost:3000/live', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
 
 # Start the app
-CMD ["node", "src/index.js"]
+CMD ["node", "start-server.js"]

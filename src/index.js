@@ -25,10 +25,10 @@ async function start() {
       return done();
     }
     
-    const apiKey = req.query.apiKey;
+    const apiKey = req.headers['x-api-key'];
     const allowedKeys = (process.env.API_KEYS || 'dev-key-local-only').split(',').map(k => k.trim());
     if (!apiKey || !allowedKeys.includes(apiKey)) {
-      reply.code(401).send({ error: 'Unauthorized', message: 'Valid apiKey required' });
+      reply.code(401).send({ error: 'Unauthorized', message: 'Valid X-API-Key header required' });
     } else {
       done();
     }
@@ -41,10 +41,10 @@ async function start() {
       const XMLParser = require('fast-xml-parser').XMLParser;
       
       // API key check
-      const apiKey = request.query.apiKey;
+      const apiKey = request.headers['x-api-key'];
       const allowedKeys = (process.env.API_KEYS || 'dev-key-local-only').split(',').map(k => k.trim());
       if (!apiKey || !allowedKeys.includes(apiKey)) {
-        return reply.code(401).send({ error: 'Unauthorized', message: 'Valid apiKey required' });
+        return reply.code(401).send({ error: 'Unauthorized', message: 'Valid X-API-Key header required' });
       }
       
       const { ledgerName, from, to } = request.query;
@@ -52,9 +52,7 @@ async function start() {
         return reply.code(400).send({ error: 'Ledger name is required' });
       }
       
-      const tallyHost = process.env.TALLY_HOST || 'host.docker.internal';
-      const tallyPort = process.env.TALLY_PORT || '9000';
-      const tallyUrl = `${tallyHost}:${tallyPort}`;
+      const tallyUrl = "127.0.0.1:9000"; // Hardcoded for debugging
       
       // For now, return mock data structure matching your expected format
       // In production, this would be replaced with actual Tally XML requests
@@ -136,8 +134,14 @@ async function start() {
         }
       });
     } catch (err) {
+      console.error('=== REAL ERROR LEDGER TRANSACTIONS ===');
+      console.error('Error type:', err.constructor.name);
+      console.error('Error message:', err.message);
+      console.error('Error code:', err.code);
+      console.error('Full error:', err);
+      console.error('=== END REAL ERROR ===');
       fastify.log.error(err);
-      reply.code(500).send({ error: 'Ledger transactions fetch failed', message: err.message });
+      reply.code(500).send({ error: 'Ledger transactions fetch failed', message: err.message, realError: err.code || 'unknown' });
     }
   });
 
@@ -148,15 +152,13 @@ async function start() {
       const XMLParser = require('fast-xml-parser').XMLParser;
       
       // API key check
-      const apiKey = request.query.apiKey;
+      const apiKey = request.headers['x-api-key'];
       const allowedKeys = (process.env.API_KEYS || 'dev-key-local-only').split(',').map(k => k.trim());
       if (!apiKey || !allowedKeys.includes(apiKey)) {
-        return reply.code(401).send({ error: 'Unauthorized', message: 'Valid apiKey required' });
+        return reply.code(401).send({ error: 'Unauthorized', message: 'Valid X-API-Key header required' });
       }
       
-      const tallyHost = process.env.TALLY_HOST || 'host.docker.internal';
-      const tallyPort = process.env.TALLY_PORT || '9000';
-      const tallyUrl = `${tallyHost}:${tallyPort}`;
+      const tallyUrl = "127.0.0.1:9000"; // Hardcoded for debugging
       
       const { ledgerName } = request.query;
       if (!ledgerName) {
@@ -209,188 +211,169 @@ async function start() {
         }
       });
     } catch (err) {
+      console.error('=== REAL ERROR LEDGER DETAILS ===');
+      console.error('Error type:', err.constructor.name);
+      console.error('Error message:', err.message);
+      console.error('Error code:', err.code);
+      console.error('Full error:', err);
+      console.error('=== END REAL ERROR ===');
       fastify.log.error(err);
-      reply.code(500).send({ error: 'Ledger details fetch failed', message: err.message });
+      reply.code(500).send({ error: 'Ledger details fetch failed', message: err.message, realError: err.code || 'unknown' });
     }
   });
 
-  // Tally Ledgers endpoint
+  // Tally Ledgers endpoint - REAL IMPLEMENTATION
   fastify.get('/api/v1/ledgers', async (request, reply) => {
+    console.log('🎯 REAL LEDGERS ENDPOINT HIT');
     try {
-      const axios = require('axios');
-      const XMLParser = require('fast-xml-parser').XMLParser;
+      // Validation - check API key first
+      const apiKey = request.headers['x-api-key'];
+      const allowedKeys = (process.env.API_KEYS || 'dev-key-local-only').split(',').map(k => k.trim());
+      if (!apiKey || !allowedKeys.includes(apiKey)) {
+        console.log('❌ AUTH FAILED - No valid X-API-Key header');
+        return reply.code(401).send({ 
+          success: false, 
+          error: 'Unauthorized', 
+          message: 'Valid X-API-Key header required' 
+        });
+      }
       
-      const tallyHost = process.env.TALLY_HOST || 'host.docker.internal';
-      const tallyPort = process.env.TALLY_PORT || '9000';
-      const tallyUrl = `${tallyHost}:${tallyPort}`;
-      // Build Tally XML request based on type
-      function buildTallyRequest(type = 'TrialBalance', options = {}) {
-        const requests = {
-          TrialBalance: {
-            id: 'Trial Balance',
-            fetch: '<FETCH>*</FETCH>',
-            staticVars: options.dateRange 
-              ? `<STATICVARIABLES><SVFROMDATE>${options.from}</SVFROMDATE><SVTODATE>${options.to}</SVTODATE></STATICVARIABLES>`
-              : '<STATICVARIABLES><SVEXPORTFORMAT>XML</SVEXPORTFORMAT></STATICVARIABLES>'
-          },
-          LedgerBalance: {
-            id: 'Ledger Balance',
-            fetch: '<FETCH>NAME,OPENINGBALANCE,CLOSINGBALANCE,CURRENTBALANCE,PARENT,GUID</FETCH>',
-            staticVars: '<STATICVARIABLES><SVEXPORTFORMAT>XML</SVEXPORTFORMAT></STATICVARIABLES>'
-          },
-          ListOfLedgers: {
-            id: 'List of Ledgers', 
-            fetch: '<FETCH>NAME</FETCH>',
-            staticVars: '<STATICVARIABLES><SVEXPORTFORMAT>XML</SVEXPORTFORMAT></STATICVARIABLES>'
-          }
-        };
-        
-        const config = requests[type] || requests.TrialBalance;
-        
-        return `<?xml version="1.0" encoding="utf-8"?>
+      console.log('✅ AUTH SUCCESS');
+      
+      // Parse query parameters with validation
+      const { 
+        company, 
+        includeBalances = 'true', 
+        from, 
+        to,
+        page = 1,
+        limit = 50
+      } = request.query;
+      
+      // Validate pagination
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      if (isNaN(pageNum) || pageNum < 1) {
+        return reply.code(400).send({
+          success: false,
+          error: 'InvalidParameter',
+          message: 'page must be a positive integer'
+        });
+      }
+      if (isNaN(limitNum) || limitNum < 1 || limitNum > 500) {
+        return reply.code(400).send({
+          success: false,
+          error: 'InvalidParameter', 
+          message: 'limit must be between 1 and 500'
+        });
+      }
+      
+      const tallyUrl = "127.0.0.1:9000"; // Hardcoded for debugging
+      console.log('📡 Connecting to Tally at:', tallyUrl);
+      
+      // Build XML request for ledgers
+      const xmlRequest = `<?xml version="1.0" encoding="utf-8"?>
 <ENVELOPE>
   <HEADER>
     <VERSION>1</VERSION>
     <TALLYREQUEST>Export Data</TALLYREQUEST>
     <TYPE>Collection</TYPE>
-    <ID>${config.id}</ID>
+    <ID>List of Ledgers</ID>
   </HEADER>
   <BODY>
     <DESC>
-      ${config.staticVars}
+      <STATICVARIABLES>
+        <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
+      </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
-          <COLLECTION NAME="${config.id}" ISMODIFY="No">
+          <COLLECTION NAME="List of Ledgers" ISMODIFY="No">
             <TYPE>Ledger</TYPE>
-            ${config.fetch}
+            <FETCH>NAME,OPENINGBALANCE,CLOSINGBALANCE,CURRENTBALANCE,PARENT,GUID</FETCH>
           </COLLECTION>
         </TDLMESSAGE>
       </TDL>
     </DESC>
   </BODY>
 </ENVELOPE>`;
-      }
       
-      const requestType = request.query.type || process.env.TALLY_REQUEST_TYPE || 'LedgerBalance';
-      const includeBalances = request.query.includeBalances !== 'false';
-      const effectiveType = includeBalances ? 'LedgerBalance' : 'ListOfLedgers';
-      const from = request.query.from;
-      const to = request.query.to;
-      const xmlRequest = buildTallyRequest(effectiveType, { from, to });
-      
+      console.log('📤 Sending XML request to Tally...');
       const startTime = Date.now();
       
+      // Make request to Tally
+      const axios = require('axios');
       const response = await axios.post(`http://${tallyUrl}`, xmlRequest, {
         headers: { 'Content-Type': 'text/xml' },
         timeout: 10000
       });
       
-      // Debug: Log the raw XML response
-      console.log('=== RAW TALLY XML RESPONSE ===');
-      console.log(response.data);
-      console.log('=== END RAW RESPONSE ===');
+      console.log('✅ Tally response received - Status:', response.status);
+      console.log('📄 Raw XML (first 500 chars):', response.data.substring(0, 500));
       
-      const parser = new XMLParser();
+      // Parse XML response
+      const XMLParser = require('fast-xml-parser').XMLParser;
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix: '@_',
+        parseTagValue: false,
+        isArray: (tagName) => ['LEDGER'].includes(tagName.toUpperCase()),
+        trimValues: true,
+      });
+      
       const result = parser.parse(response.data);
+      console.log('📊 Parsed result keys:', Object.keys(result));
       
-      // Debug: Log the parsed result
-      console.log('Parsed Result (first 1000 chars):', JSON.stringify(result, null, 2).substring(0, 1000));
-      
-      // Debug: Check if we have TALLYMESSAGE
-      if (result.ENVELOPE?.BODY?.DATA?.TALLYMESSAGE) {
-        console.log('Found TALLYMESSAGE!');
-        const tallyMessage = Array.isArray(result.ENVELOPE.BODY.DATA.TALLYMESSAGE) 
-          ? result.ENVELOPE.BODY.DATA.TALLYMESSAGE 
-          : [result.ENVELOPE.BODY.DATA.TALLYMESSAGE];
-        
-        console.log('TALLYMESSAGE length:', tallyMessage.length);
-        console.log('First TALLYMESSAGE keys:', Object.keys(tallyMessage[0] || {}));
-        
-        if (tallyMessage[0]?.COLLECTION) {
-          console.log('Found COLLECTION!');
-          console.log('COLLECTION keys:', Object.keys(tallyMessage[0].COLLECTION));
-          
-          if (tallyMessage[0].COLLECTION.LEDGER) {
-            console.log('Found LEDGER!');
-            console.log('LEDGER type:', typeof tallyMessage[0].COLLECTION.LEDGER);
-            console.log('LEDGER is array:', Array.isArray(tallyMessage[0].COLLECTION.LEDGER));
-          }
-        }
-      } else {
-        console.log('No TALLYMESSAGE found!');
-        console.log('Available paths:', Object.keys(result.ENVELOPE?.BODY?.DATA || {}));
-      }
-      
-      // Extract ledgers from the actual Tally response structure
+      // Extract ledgers from response
       let ledgers = [];
       
-      // Handle Trial Balance format
       if (result.ENVELOPE?.BODY?.DATA?.COLLECTION?.LEDGER) {
         const ledgerData = result.ENVELOPE.BODY.DATA.COLLECTION.LEDGER;
         ledgers = Array.isArray(ledgerData) ? ledgerData : [ledgerData];
-        console.log('Found ledgers in Trial Balance format:', ledgers.length);
-      }
-      // Fallback to regular ledger list format
-      else if (result.ENVELOPE?.BODY?.DATA?.COLLECTION?.LEDGER) {
-        const ledgerData = result.ENVELOPE.BODY.DATA.COLLECTION.LEDGER;
-        ledgers = Array.isArray(ledgerData) ? ledgerData : [ledgerData];
-        console.log('Found ledgers in regular format:', ledgers.length);
-      }
-      else if (result.ENVELOPE?.BODY?.DATA?.TALLYMESSAGE) {
-        // Fallback to the old structure
+        console.log('📋 Found ledgers in COLLECTION format:', ledgers.length);
+      } else if (result.ENVELOPE?.BODY?.DATA?.TALLYMESSAGE) {
         const tallyMessage = Array.isArray(result.ENVELOPE.BODY.DATA.TALLYMESSAGE) 
           ? result.ENVELOPE.BODY.DATA.TALLYMESSAGE 
           : [result.ENVELOPE.BODY.DATA.TALLYMESSAGE];
         
-        // Extract LEDGER objects from COLLECTION
         ledgers = tallyMessage
           .map(msg => msg.COLLECTION?.LEDGER)
           .filter(ledger => ledger)
           .flat();
-        console.log('Found ledgers under TALLYMESSAGE:', ledgers.length);
+        console.log('📋 Found ledgers in TALLYMESSAGE format:', ledgers.length);
+      } else {
+        console.log('⚠️ No ledgers found in response structure');
+        console.log('Available paths:', JSON.stringify(result, null, 2).substring(0, 1000));
       }
       
-      // Clean up ledger data - extract names from the nested LANGUAGENAME structure
       // Helper function to parse Tally amounts
-        function parseTallyAmount(value) {
-          if (!value || value === '') return null;
-          
-          // Handle Tally's negative amounts in parentheses
-          if (typeof value === 'string') {
-            value = value.trim();
-            if (value.startsWith('(') && value.endsWith(')')) {
-              return -parseFloat(value.slice(1, -1));
-            }
-            return parseFloat(value) || null;
+      function parseTallyAmount(value) {
+        if (!value || value === '') return null;
+        if (typeof value === 'string') {
+          value = value.trim();
+          if (value.startsWith('(') && value.endsWith(')')) {
+            return -parseFloat(value.slice(1, -1));
           }
-          return value;
+          return parseFloat(value) || null;
         }
+        return value;
+      }
       
+      // Process and clean ledger data
       const cleanLedgers = ledgers.map((ledger, index) => {
         let name = 'Unknown';
         
-        // Debug first few ledgers to understand structure
-        if (index < 3) {
-          console.log(`Ledger ${index} structure:`, JSON.stringify(ledger, null, 2));
-        }
-        
-        // Extract name from the nested structure we saw in logs
-        if (ledger['LANGUAGENAME.LIST']?.['NAME.LIST']?.NAME) {
-          // Handle the keys with dots in them
+        // Extract name from various possible structures
+        if (ledger.NAME) {
+          name = ledger.NAME.replace(/&#13;&#10;/g, '').trim();
+        } else if (ledger['LANGUAGENAME.LIST']?.['NAME.LIST']?.NAME) {
           name = ledger['LANGUAGENAME.LIST']['NAME.LIST'].NAME.replace(/&#13;&#10;/g, '').trim();
         } else if (ledger.LANGUAGENAME?.LIST?.NAME?.LIST) {
           const nameList = Array.isArray(ledger.LANGUAGENAME.LIST.NAME.LIST) 
             ? ledger.LANGUAGENAME.LIST.NAME.LIST 
             : [ledger.LANGUAGENAME.LIST.NAME.LIST];
-          
           if (nameList.length > 0 && nameList[0].NAME) {
             name = nameList[0].NAME.replace(/&#13;&#10;/g, '').trim();
           }
-        } else if (ledger.NAME) {
-          name = ledger.NAME.replace(/&#13;&#10;/g, '').trim();
-        } else if (ledger.LANGUAGENAME?.LIST?.NAME) {
-          // Try direct path
-          name = ledger.LANGUAGENAME.LIST.NAME.replace(/&#13;&#10;/g, '').trim();
         }
         
         return {
@@ -398,27 +381,57 @@ async function start() {
           openingBalance: parseTallyAmount(ledger.OPENINGBALANCE),
           closingBalance: parseTallyAmount(ledger.CLOSINGBALANCE),
           currentBalance: parseTallyAmount(ledger.CURRENTBALANCE),
-          parent: ledger.PARENT || ledger.PARENTNAME || ledger.GROUP || null,
-          guid: ledger.GUID || ledger.ID || ledger.UNIQUEID || null
+          parent: ledger.PARENT || ledger.PARENTNAME || null,
+          guid: ledger.GUID || ledger.ID || null
         };
       });
       
-      console.log(`Extracted ${cleanLedgers.length} ledgers. First few:`, cleanLedgers.slice(0, 3));
+      // Apply pagination
+      const total = cleanLedgers.length;
+      const startIndex = (pageNum - 1) * limitNum;
+      const endIndex = startIndex + limitNum;
+      const paginatedLedgers = cleanLedgers.slice(startIndex, endIndex);
+      
+      console.log(`📈 Processed ${total} ledgers, returning page ${pageNum} (${paginatedLedgers.length} items)`);
       
       reply.send({ 
         success: true, 
-        ledgers: cleanLedgers, 
-        count: cleanLedgers.length,
+        ledgers: paginatedLedgers,
+        pagination: {
+          page: pageNum,
+          limit: limitNum,
+          total: total,
+          pages: Math.ceil(total / limitNum)
+        },
         meta: {
-          requestType: effectiveType,
-          includeBalances: includeBalances,
+          requestType: 'List of Ledgers',
+          includeBalances: includeBalances === 'true',
+          company: company || 'default',
           timestamp: new Date().toISOString(),
           processingTime: Date.now() - startTime
         }
       });
+      
     } catch (err) {
-      fastify.log.error(err);
-      reply.code(500).send({ error: 'Tally fetch failed', message: err.message });
+      console.error('=== REAL ERROR LEDGERS FETCH ===');
+      console.error('Error type:', err.constructor.name);
+      console.error('Error message:', err.message);
+      console.error('Error code:', err.code);
+      console.error('Full error:', err);
+      console.error('=== END REAL ERROR ===');
+      
+      // Send honest error response
+      const statusCode = err.code === 'ECONNREFUSED' ? 503 : 500;
+      reply.code(statusCode).send({ 
+        success: false,
+        error: err.constructor.name,
+        message: err.message,
+        realError: {
+          code: err.code,
+          type: err.constructor.name,
+          tallyHost: '127.0.0.1:9000'
+        }
+      });
     }
   });
 

@@ -16,13 +16,13 @@
 
 'use strict';
 
-const { sendToTally } = require('../../../../services/connectors/tally.client');
-const { buildVoucherListXml, buildSingleVoucherXml } = require('../../../../services/xml/builder/voucher.xml');
-const { parseVoucherList, normaliseVoucher } = require('../../../../services/xml/parser/voucher.parser');
-const { parseXml, ensureArray, safeGet } = require('../../../../services/xml/parser/index');
-const cacheManager = require('../../../../cache/simple-cache');
-const config = require('../../../../../config');
-const logger = require('../../../../config/logger');
+const { sendToTally } = require('../connectors/tally.client.js');
+const { buildVoucherListXml, buildSingleVoucherXml } = require('../xml/builder/voucher.xml');
+const { parseVoucherList, normaliseVoucher } = require('../xml/parser/voucher.parser');
+const { parseXml, ensureArray, safeGet } = require('../xml/parser/index');
+const cacheManager = require('../../cache/simple-cache');
+const config = require('../../config');
+const logger = require('../../config/logger');
 
 const CACHE_PREFIX = 'tally:vouchers';
 // Vouchers get shorter TTL than ledgers — data changes more frequently

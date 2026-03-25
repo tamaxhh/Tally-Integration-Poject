@@ -30,19 +30,26 @@ const config = require('../config');
  * @param {FastifyReply} reply
  */
 async function authMiddleware(request, reply) {
+  console.log('🔐 AUTH MIDDLEWARE - URL:', request.url);
+  console.log('🔑 API Key present:', !!request.headers['x-api-key']);
+  
   // Skip auth for health check — monitoring systems need unauthenticated access
   if (request.url.startsWith('/health') || request.url.startsWith('/live') || request.url.startsWith('/ready') || request.url === '/') {
+    console.log('✅ AUTH SKIPPED - public endpoint');
     return;
   }
 
   // Skip auth for static files (HTML, CSS, JS)
   if (request.url.includes('.html') || request.url.includes('.css') || request.url.includes('.js') || request.url.includes('.ico')) {
+    console.log('✅ AUTH SKIPPED - static file');
     return;
   }
 
   const apiKey = request.headers['x-api-key'];
+  console.log('🔑 Received API Key:', apiKey);
 
   if (!apiKey) {
+    console.log('❌ AUTH FAILED - missing API key');
     return reply.code(401).send({
       error: 'Unauthorized',
       message: 'Missing X-API-Key header',
@@ -51,12 +58,15 @@ async function authMiddleware(request, reply) {
 
   if (!config.auth.apiKeys.has(apiKey)) {
     // Log failed auth attempts — useful for detecting key exposure
+    console.log('❌ AUTH FAILED - invalid API key');
     request.log.warn({ ip: request.ip, path: request.url }, 'Invalid API key attempt');
     return reply.code(403).send({
       error: 'Forbidden',
       message: 'Invalid API key',
     });
   }
+  
+  console.log('✅ AUTH SUCCESS');
 }
 
 module.exports = { authMiddleware };

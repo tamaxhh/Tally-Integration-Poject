@@ -46,8 +46,9 @@ services:
 
     # Mount source code for hot-reload in development
     # In production, remove this volume mount
-    volumes:
-      - ./src:/app/src:ro
+    # TEMPORARILY DISABLED for Docker debugging
+    # volumes:
+    #   - ./src:/app/src:ro
 
     restart: unless-stopped
 

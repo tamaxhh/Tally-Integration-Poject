@@ -37,6 +37,10 @@ const { AppError } = require('../utils/errors');
  * @param {FastifyReply} reply
  */
 async function errorHandler(error, request, reply) {
+  console.log('🚨 ERROR HANDLER - Error:', error.message);
+  console.log('🚨 ERROR HANDLER - Error type:', error.constructor.name);
+  console.log('🚨 ERROR HANDLER - Stack:', error.stack);
+  
   // Fastify's built-in validation errors (from JSON Schema on routes)
   // have a statusCode of 400 and a validation array
   if (error.validation) {

@@ -1,0 +1,11 @@
+# Ignore dependencies and development files
+node_modules
+npm-debug.log*
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+
+# Keep source files - this was the issue!
+# src/

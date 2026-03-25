@@ -76,11 +76,11 @@ async function buildServer() {
     methods: ['GET', 'POST', 'OPTIONS'],
   });
 
-  // Static file serving for frontend
-  await server.register(require('@fastify/static'), {
-    root: path.join(__dirname, '..', 'public'),
-    prefix: '/', // Optional: remove prefix if you want to serve from root
-  });
+  // Static file serving for frontend (temporarily disabled for Docker debugging)
+  // await server.register(require('@fastify/static'), {
+  //   root: path.join(__dirname, '..', 'public'),
+  //   prefix: '/', // Optional: remove prefix if you want to serve from root
+  // });
 
   // ============================================================
   // Rate limiting

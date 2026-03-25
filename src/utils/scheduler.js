@@ -34,7 +34,7 @@
 const cron = require('node-cron');
 const config = require('../config');
 const logger = require('../config/logger');
-const { isTallyOnline } = require('../connectors/tally/client');
+const { isTallyOnline } = require('../services/connectors/tally.client.js');
 
 // In-memory job lock — prevents concurrent runs of the same job
 // For multi-process setups, use Redis-based distributed locks instead
