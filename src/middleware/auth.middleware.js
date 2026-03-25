@@ -20,7 +20,7 @@
 
 'use strict';
 
-const config = require('../../config');
+const config = require('../config');
 
 /**
  * Fastify hook that validates the X-API-Key header on every request.
@@ -31,7 +31,12 @@ const config = require('../../config');
  */
 async function authMiddleware(request, reply) {
   // Skip auth for health check — monitoring systems need unauthenticated access
-  if (request.routerPath === '/health' || request.routerPath === '/') {
+  if (request.url.startsWith('/health') || request.url.startsWith('/live') || request.url.startsWith('/ready') || request.url === '/') {
+    return;
+  }
+
+  // Skip auth for static files (HTML, CSS, JS)
+  if (request.url.includes('.html') || request.url.includes('.css') || request.url.includes('.js') || request.url.includes('.ico')) {
     return;
   }
 

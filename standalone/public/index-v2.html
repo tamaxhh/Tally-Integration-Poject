@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌐 Tally Integration API - v2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .results {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            min-height: 200px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #c33;
+        }
+
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3c3;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .json-output {
+            background: #f8f9fa;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-connected {
+            background: #28a745;
+        }
+
+        .status-disconnected {
+            background: #dc3545;
+        }
+
+        .connection-status {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌐 Tally Integration API</h1>
+            <p>Real-time data fetching from Tally Prime with proper error handling</p>
+        </div>
+
+        <div class="connection-status" id="connectionStatus">
+            <span class="status-indicator status-disconnected"></span>
+            <span id="connectionText">Not connected to Tally</span>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h3>🔧 Configuration</h3>
+                
+                <div class="form-group">
+                    <label for="apiKey">API Key</label>
+                    <input type="text" id="apiKey" value="dev-key-local-only" placeholder="Enter API key">
+                </div>
+
+                <div class="form-group">
+                    <label for="company">Company Name (Optional)</label>
+                    <input type="text" id="company" placeholder="Tally company name">
+                </div>
+
+                <div class="form-group">
+                    <label for="operation">Operation</label>
+                    <select id="operation" onchange="updateFormFields()">
+                        <option value="ledgers">Get All Ledgers</option>
+                        <option value="balances">Get Ledger Balances</option>
+                        <option value="ledger-details">Get Ledger Details</option>
+                        <option value="transactions">Get Ledger Transactions</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="ledgerNameGroup" style="display: none;">
+                    <label for="ledgerName">Ledger Name</label>
+                    <input type="text" id="ledgerName" placeholder="Enter ledger name">
+                </div>
+
+                <div class="form-group" id="dateRangeGroup" style="display: none;">
+                    <label for="fromDate">From Date</label>
+                    <input type="date" id="fromDate">
+                    
+                    <label for="toDate" style="margin-top: 10px;">To Date</label>
+                    <input type="date" id="toDate">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="bypassCache"> Bypass Cache (Force fresh data)
+                    </label>
+                </div>
+
+                <button class="btn" onclick="testConnection()">🔗 Test Connection</button>
+                <button class="btn" onclick="fetchData()">📊 Fetch Data</button>
+                <button class="btn btn-secondary" onclick="clearCache()">🗑️ Clear Cache</button>
+            </div>
+
+            <div class="card results">
+                <h3>📈 Results</h3>
+                <div id="results">
+                    <div style="text-align: center; color: #666; padding: 40px;">
+                        Configure your request and click "Fetch Data" to see results
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/v1';
+        let connectionStatus = false;
+
+        function updateFormFields() {
+            const operation = document.getElementById('operation').value;
+            const ledgerNameGroup = document.getElementById('ledgerNameGroup');
+            const dateRangeGroup = document.getElementById('dateRangeGroup');
+
+            // Hide all optional fields first
+            ledgerNameGroup.style.display = 'none';
+            dateRangeGroup.style.display = 'none';
+
+            // Show relevant fields based on operation
+            if (operation === 'ledger-details' || operation === 'transactions') {
+                ledgerNameGroup.style.display = 'block';
+            }
+
+            if (operation === 'balances' || operation === 'transactions') {
+                dateRangeGroup.style.display = 'block';
+            }
+        }
+
+        function getApiKey() {
+            return document.getElementById('apiKey').value;
+        }
+
+        function updateConnectionStatus(connected) {
+            connectionStatus = connected;
+            const indicator = document.querySelector('.status-indicator');
+            const text = document.getElementById('connectionText');
+            
+            if (connected) {
+                indicator.className = 'status-indicator status-connected';
+                text.textContent = 'Connected to Tally API';
+            } else {
+                indicator.className = 'status-indicator status-disconnected';
+                text.textContent = 'Not connected to Tally';
+            }
+        }
+
+        async function testConnection() {
+            showLoading('Testing connection to Tally API...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/../health`, {
+                    headers: {
+                        'X-API-Key': getApiKey()
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    updateConnectionStatus(true);
+                    showSuccess(`✅ API is healthy! Server status: ${result.status}`);
+                } else {
+                    updateConnectionStatus(false);
+                    showError(`❌ API health check failed: ${response.status}`);
+                }
+            } catch (error) {
+                updateConnectionStatus(false);
+                showError(`❌ Connection test failed: ${error.message}`);
+            }
+        }
+
+        async function fetchData() {
+            const operation = document.getElementById('operation').value;
+            const company = document.getElementById('company').value;
+            const ledgerName = document.getElementById('ledgerName').value;
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+            const bypassCache = document.getElementById('bypassCache').checked;
+
+            let url = `${API_BASE}/ledgers`;
+            let params = new URLSearchParams();
+
+            // Add API key to all requests
+            params.append('apiKey', getApiKey());
+
+            // Build URL based on operation
+            switch (operation) {
+                case 'ledgers':
+                    url = `${API_BASE}/ledgers`;
+                    if (company) params.append('company', company);
+                    if (bypassCache) params.append('bypassCache', 'true');
+                    break;
+
+                case 'balances':
+                    url = `${API_BASE}/ledgers/balances`;
+                    if (company) params.append('company', company);
+                    if (fromDate) params.append('from', fromDate);
+                    if (toDate) params.append('to', toDate);
+                    if (bypassCache) params.append('bypassCache', 'true');
+                    break;
+
+                case 'ledger-details':
+                    if (!ledgerName) {
+                        showError('❌ Ledger name is required for this operation');
+                        return;
+                    }
+                    url = `${API_BASE}/ledgers/${encodeURIComponent(ledgerName)}`;
+                    if (company) params.append('company', company);
+                    if (bypassCache) params.append('bypassCache', 'true');
+                    break;
+
+                case 'transactions':
+                    if (!ledgerName) {
+                        showError('❌ Ledger name is required for this operation');
+                        return;
+                    }
+                    url = `${API_BASE}/ledgers/${encodeURIComponent(ledgerName)}/transactions`;
+                    if (company) params.append('company', company);
+                    if (fromDate) params.append('from', fromDate);
+                    if (toDate) params.append('to', toDate);
+                    if (bypassCache) params.append('bypassCache', 'true');
+                    break;
+            }
+
+            const fullUrl = params.toString() ? `${url}?${params}` : url;
+
+            showLoading('Fetching data from Tally...');
+
+            try {
+                const response = await fetch(fullUrl);
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess(`✅ Successfully fetched data!`);
+                    displayResults(result, operation);
+                } else {
+                    showError(`❌ Failed to fetch data: ${result.error}`);
+                    if (result.message) {
+                        showError(`Details: ${result.message}`);
+                    }
+                }
+            } catch (error) {
+                showError(`❌ Request failed: ${error.message}`);
+            }
+        }
+
+        async function clearCache() {
+            const company = document.getElementById('company').value;
+            
+            showLoading('Clearing cache...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/ledgers/cache/invalidate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': getApiKey()
+                    },
+                    body: JSON.stringify({ company })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showSuccess(`✅ Cache cleared successfully!`);
+                } else {
+                    showError(`❌ Failed to clear cache: ${result.error}`);
+                }
+            } catch (error) {
+                showError(`❌ Cache clear failed: ${error.message}`);
+            }
+        }
+
+        function showLoading(message) {
+            document.getElementById('results').innerHTML = `<div class="loading">${message}</div>`;
+        }
+
+        function showError(message) {
+            document.getElementById('results').innerHTML = `<div class="error">${message}</div>`;
+        }
+
+        function showSuccess(message) {
+            document.getElementById('results').innerHTML = `<div class="success">${message}</div>`;
+        }
+
+        function displayResults(result, operation) {
+            let html = '';
+
+            // Add metadata
+            if (result.meta) {
+                html += `
+                    <div style="margin-bottom: 15px;">
+                        <strong>Processing Time:</strong> ${result.meta.timestamp}<br>
+                        <strong>From Cache:</strong> ${result.meta.fromCache ? 'Yes' : 'No'}<br>
+                        ${result.meta.total ? `<strong>Total Items:</strong> ${result.meta.total}<br>` : ''}
+                    </div>
+                `;
+            }
+
+            // Display data based on operation type
+            if (operation === 'transactions') {
+                // Transaction data has different structure
+                const data = result.data;
+                html += `
+                    <h3>📊 Ledger Transactions</h3>
+                    <div style="margin-bottom: 15px;">
+                        <strong>Ledger:</strong> ${data.ledger?.name || 'N/A'}<br>
+                        <strong>Company:</strong> ${data.ledger?.company || 'N/A'}<br>
+                        <strong>Period:</strong> ${data.ledger?.period?.from || 'N/A'} to ${data.ledger?.period?.to || 'N/A'}
+                    </div>
+                `;
+
+                if (data.summary) {
+                    html += `
+                        <h4>📈 Summary</h4>
+                        <table class="data-table">
+                            <tr><td>Opening Balance</td><td>${data.summary.opening_balance || 0}</td></tr>
+                            <tr><td>Total Debit</td><td>${data.summary.total_debit || 0}</td></tr>
+                            <tr><td>Total Credit</td><td>${data.summary.total_credit || 0}</td></tr>
+                            <tr><td>Closing Balance</td><td>${data.summary.closing_balance || 0}</td></tr>
+                        </table>
+                    `;
+                }
+
+                if (data.transactions && data.transactions.length > 0) {
+                    html += '<h4>📋 Transactions</h4>';
+                    html += '<table class="data-table"><thead><tr>';
+                    const keys = Object.keys(data.transactions[0]);
+                    keys.forEach(key => {
+                        html += `<th>${key}</th>`;
+                    });
+                    html += '</tr></thead><tbody>';
+                    
+                    data.transactions.forEach(item => {
+                        html += '<tr>';
+                        keys.forEach(key => {
+                            const value = item[key] !== null ? item[key] : 'N/A';
+                            html += `<td>${value}</td>`;
+                        });
+                        html += '</tr>';
+                    });
+                    
+                    html += '</tbody></table>';
+                } else {
+                    html += '<p>No transactions found for the specified criteria.</p>';
+                }
+            } else {
+                // Standard array data (ledgers, balances, etc.)
+                const data = result.data || [];
+                
+                if (data && data.length > 0) {
+                    html += '<table class="data-table"><thead><tr>';
+                    const keys = Object.keys(data[0]);
+                    keys.forEach(key => {
+                        html += `<th>${key}</th>`;
+                    });
+                    html += '</tr></thead><tbody>';
+                    
+                    data.forEach(item => {
+                        html += '<tr>';
+                        keys.forEach(key => {
+                            const value = item[key] !== null ? item[key] : 'N/A';
+                            html += `<td>${value}</td>`;
+                        });
+                        html += '</tr>';
+                    });
+                    
+                    html += '</tbody></table>';
+                } else {
+                    html += '<p>No data found for the specified criteria.</p>';
+                }
+            }
+
+            // Add raw JSON response
+            html += `
+                <h3>🔧 Raw JSON Response</h3>
+                <div class="json-output">${JSON.stringify(result, null, 2)}</div>
+            `;
+
+            document.getElementById('results').innerHTML = html;
+        }
+
+        // Initialize form on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFormFields();
+            
+            // Set today's date as default for date fields
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('fromDate').value = today;
+            document.getElementById('toDate').value = today;
+        });
+    </script>
+</body>
+</html>

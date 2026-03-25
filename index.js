@@ -35,7 +35,7 @@
 'use strict';
 
 const { XMLParser } = require('fast-xml-parser');
-const { XmlParseError } = require('../../utils/errors');
+const { XmlParseError } = require('./src/utils/errors');
 
 // ============================================================
 // Parser configuration

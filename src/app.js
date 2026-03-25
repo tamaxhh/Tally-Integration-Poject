@@ -19,16 +19,17 @@
 
 'use strict';
 
+const path = require('path');
 const fastify = require('fastify');
-const config = require('../config');
-const logger = require('../config/logger');
-const { authMiddleware } = require('./middleware/auth');
-const { errorHandler } = require('./middleware/errorHandler');
+const config = require('./config');
+const logger = require('./config/logger');
+const { authMiddleware } = require('./middleware/auth.middleware');
+const { errorHandler } = require('./middleware/errorHandler.middleware');
 
 // Route handlers
 const ledgerRoutes = require('./routes/ledger.routes');
-const voucherRoutes = require('./routes/voucher.routes');
-const reportRoutes = require('./routes/report.routes');
+// const voucherRoutes = require('./routes/voucher.routes');
+// const reportRoutes = require('./routes/report.routes');
 const healthRoutes = require('./routes/health.routes');
 
 /**
@@ -40,7 +41,17 @@ const healthRoutes = require('./routes/health.routes');
 async function buildServer() {
   const server = fastify({
     // Use our Pino logger directly — Fastify has first-class Pino support
-    logger,
+    logger: {
+      level: config.logLevel || 'info',
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'HH:MM:ss Z',
+          ignore: 'pid,hostname',
+        },
+      },
+    },
     // Generate unique request IDs — invaluable for tracing requests in logs
     genReqId: () => require('crypto').randomUUID(),
     // Allow Fastify's serializer to handle BigInt (common in financial data)
@@ -65,21 +76,21 @@ async function buildServer() {
     methods: ['GET', 'POST', 'OPTIONS'],
   });
 
+  // Static file serving for frontend
+  await server.register(require('@fastify/static'), {
+    root: path.join(__dirname, '..', 'public'),
+    prefix: '/', // Optional: remove prefix if you want to serve from root
+  });
+
   // ============================================================
   // Rate limiting
   // ============================================================
   // Prevents abuse and protects Tally from being overwhelmed.
   // 100 requests per minute per IP is generous for a data API.
+  // Rate limiting with simple configuration
   await server.register(require('@fastify/rate-limit'), {
-    max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10),
-    timeWindow: '1 minute',
-    // Use Redis for distributed rate limiting across multiple server instances
-    // Without Redis, each server tracks its own counts independently
-    redis: config.redis.url ? (() => {
-      const { createRedisClient } = require('../cache/redis');
-      return createRedisClient();
-    })() : undefined,
-    // Customise the error response for rate limit hits
+    max: 100,
+    timeWindow: 60000, // 1 minute
     errorResponseBuilder: (request, context) => ({
       error: 'TooManyRequests',
       message: `Rate limit exceeded. Try again in ${Math.ceil(context.ttl / 1000)} seconds.`,
@@ -118,8 +129,8 @@ async function buildServer() {
 
   await server.register(healthRoutes);                          // /health (no prefix — monitoring needs simple URL)
   await server.register(ledgerRoutes, { prefix: API_PREFIX });  // /api/v1/ledgers
-  await server.register(voucherRoutes, { prefix: API_PREFIX }); // /api/v1/vouchers
-  await server.register(reportRoutes, { prefix: API_PREFIX });  // /api/v1/reports
+  // await server.register(voucherRoutes, { prefix: API_PREFIX }); // /api/v1/vouchers
+  // await server.register(reportRoutes, { prefix: API_PREFIX });  // /api/v1/reports
 
   // ============================================================
   // Graceful shutdown

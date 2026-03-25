@@ -13,14 +13,12 @@
 # NOTE: Tally itself runs on your Windows machine — it's not in Docker.
 # The app connects to Tally at host.docker.internal:9000 (see environment below).
 
-version: '3.8'
-
 services:
 
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ..
+      dockerfile: docker/Dockerfile
     ports:
       - "3000:3000"
     environment:
