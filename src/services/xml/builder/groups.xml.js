@@ -18,7 +18,7 @@ function buildGroupsListXml({ fromDate, toDate } = {}) {
     <VERSION>1</VERSION>
     <TALLYREQUEST>EXPORT</TALLYREQUEST>
     <TYPE>COLLECTION</TYPE>
-    <ID>Group</ID>
+    <ID>AllLedgers</ID>
   </HEADER>
   <BODY>
     <DESC>
@@ -29,9 +29,9 @@ function buildGroupsListXml({ fromDate, toDate } = {}) {
       </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
-          <COLLECTION NAME="Group">
+          <COLLECTION NAME="AllLedgers">
             <TYPE>Group</TYPE>
-            <FETCH>NAME,GUID,PARENT</FETCH>
+            <FETCH>NAME</FETCH>
           </COLLECTION>
         </TDLMESSAGE>
       </TDL>

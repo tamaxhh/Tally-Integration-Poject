@@ -55,7 +55,7 @@ function buildDetailedVoucherXml({ company = '', fromDate = '', toDate = '', vou
     <VERSION>1</VERSION>
     <TALLYREQUEST>EXPORT</TALLYREQUEST>
     <TYPE>COLLECTION</TYPE>
-    <ID>AllVouchersDetailed</ID>
+    <ID>Collection</ID>
   </HEADER>
   <BODY>
     <DESC>
@@ -64,16 +64,13 @@ function buildDetailedVoucherXml({ company = '', fromDate = '', toDate = '', vou
         ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
         ${fromDate ? `<SVFROMDATE>${formatDate(fromDate)}</SVFROMDATE>` : ''}
         ${toDate ? `<SVTODATE>${formatDate(toDate)}</SVTODATE>` : ''}
+        ${voucherType ? `<VOUCHERTYPENAME>${voucherType}</VOUCHERTYPENAME>` : ''}
       </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
-          <COLLECTION NAME="AllVouchersDetailed">
+          <COLLECTION NAME="MyDetailedVouchers">
             <TYPE>Voucher</TYPE>
-            <FETCH>DATE,VOUCHERTYPENAME,VOUCHERNUMBER,NARRATION,REFERENCE,ALTERID,EXCISEOPENING,EXCISECLOSING,STATENAME,CSTFORMNUMBER,CSTFORMDATE,VATCSTCLASSIFICATION,DIFFACTUALQTY,DIFFACTUALS,DIFFQTY,DIFFAMOUNT,ISDELETED,ISCANCELLED,HASDISCOUNT,ISPOSTDATED,ISEXCISEOPENING,ISINVOICE,ISCANCELLED,ISCOSTCENTRE,ISINVOICE,ISDEEMEDPOSITIVE,ISOPTIONAL,ISPOSTDATED,HASDISCOUNT,ISADVANCEMODE,ISCONSIDEREDFORGSTRATE,ISGSTAPPLICABLE,ISGSTNONGSTSUPPLIES,ISGSTEXEMPTED,ISGSTNILRATED,ISGSTZERO,RATE,AMOUNT</FETCH>
-            <FETCH>ALLLEDGERENTRIES.LIST:*</FETCH>
-            <FETCH>ALLINVENTORYENTRIES.LIST:*</FETCH>
-            <FETCH>ALLSTATUTORYDETAILS.LIST:*</FETCH>
-            ${voucherType ? `<FILTER>VOUCHERTYPENAME = "${voucherType}"</FILTER>` : ''}
+            <FETCH>GUID,DATE,VOUCHERTYPENAME,VOUCHERNUMBER,NARRATION,LEDGERENTRIES,AMOUNT</FETCH>
           </COLLECTION>
         </TDLMESSAGE>
       </TDL>
@@ -85,7 +82,7 @@ function buildDetailedVoucherXml({ company = '', fromDate = '', toDate = '', vou
 /**
  * Build XML request to get single voucher details
  */
-function buildSingleVoucherXml({ voucherId, company = '' } = {}) {
+function buildSingleVoucherXml({ voucherGuid, company = '' } = {}) {
   return `<?xml version="1.0" encoding="utf-8"?>
 <ENVELOPE>
   <HEADER>
@@ -104,8 +101,8 @@ function buildSingleVoucherXml({ voucherId, company = '' } = {}) {
         <TDLMESSAGE>
           <COLLECTION NAME="Voucher Details" ISMODIFY="No">
             <TYPE>Voucher</TYPE>
-            <FETCH>*</FETCH>
-            <FILTER>GUID = "${voucherId}"</FILTER>
+            <FETCH>GUID,DATE,VOUCHERTYPENAME,VOUCHERNUMBER,NARRATION,LEDGERENTRIES,AMOUNT</FETCH>
+            <FILTER>GUID = "${voucherGuid}"</FILTER>
           </COLLECTION>
         </TDLMESSAGE>
       </TDL>

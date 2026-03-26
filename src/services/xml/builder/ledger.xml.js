@@ -62,7 +62,7 @@ function buildSingleLedgerXml({ ledgerName, company = '' } = {}) {
         <TDLMESSAGE>
           <COLLECTION NAME="Ledger Details" ISMODIFY="No">
             <TYPE>Ledger</TYPE>
-            <FETCH>*</FETCH>
+            <FETCH>NAME,GUID,PARENT,OPENINGBALANCE,CLOSINGBALANCE,CURRENTBALANCE,LEDGERFBANKING,PARTYNAME,PARTYMAIL,PARTYADDRESS,PARTYPHONE,PARTYGSTIN,PAN,BILLBYBILL,AFFECTSSTOCK,ISDEEMEDPOSITIVE,ISCOSTCENTREON,ISCOSTCENTRECREATEDON</FETCH>
             <FILTER>NAME = "${ledgerName}"</FILTER>
           </COLLECTION>
         </TDLMESSAGE>
@@ -75,7 +75,7 @@ function buildSingleLedgerXml({ ledgerName, company = '' } = {}) {
 /**
  * Build XML request to get ledger balances
  */
-function buildLedgerBalanceXml({ company = '', from = '', to = '' } = {}) {
+function buildLedgerBalanceXml({ ledgerName, company = '' } = {}) {
   return `<?xml version="1.0" encoding="utf-8"?>
 <ENVELOPE>
   <HEADER>
@@ -89,14 +89,13 @@ function buildLedgerBalanceXml({ company = '', from = '', to = '' } = {}) {
       <STATICVARIABLES>
         <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
         ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
-        ${from ? `<SVFROMDATE>${from}</SVFROMDATE>` : ''}
-        ${to ? `<SVTODATE>${to}</SVTODATE>` : ''}
       </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
           <COLLECTION NAME="Ledger Balance" ISMODIFY="No">
             <TYPE>Ledger</TYPE>
             <FETCH>NAME,OPENINGBALANCE,CLOSINGBALANCE,CURRENTBALANCE,PARENT,GUID</FETCH>
+            <FILTER>NAME = "${ledgerName}"</FILTER>
           </COLLECTION>
         </TDLMESSAGE>
       </TDL>
@@ -108,7 +107,9 @@ function buildLedgerBalanceXml({ company = '', from = '', to = '' } = {}) {
 /**
  * Build XML request to get ledger transactions
  */
-function buildLedgerTransactionsXml({ ledgerName, company = '', from = '', to = '' } = {}) {
+function buildLedgerTransactionsXml({ ledgerName, fromDate, toDate, company = '' } = {}) {
+  const formatDate = (date) => date ? date.toISOString().slice(0, 10).replace(/-/g, '') : '';
+  
   return `<?xml version="1.0" encoding="utf-8"?>
 <ENVELOPE>
   <HEADER>
@@ -122,14 +123,14 @@ function buildLedgerTransactionsXml({ ledgerName, company = '', from = '', to = 
       <STATICVARIABLES>
         <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
         ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
-        ${from ? `<SVFROMDATE>${from}</SVFROMDATE>` : ''}
-        ${to ? `<SVTODATE>${to}</SVTODATE>` : ''}
+        ${fromDate ? `<SVFROMDATE>${formatDate(fromDate)}</SVFROMDATE>` : ''}
+        ${toDate ? `<SVTODATE>${formatDate(toDate)}</SVTODATE>` : ''}
       </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
           <COLLECTION NAME="Ledger Transactions" ISMODIFY="No">
             <TYPE>Ledger</TYPE>
-            <FETCH>NAME</FETCH>
+            <FETCH>NAME,GUID,DATE,VOUCHERTYPENAME,VOUCHERNUMBER,NARRATION,AMOUNT</FETCH>
             <FILTER>NAME = "${ledgerName}"</FILTER>
           </COLLECTION>
         </TDLMESSAGE>
@@ -152,7 +153,7 @@ function buildDetailedLedgerXml({ fromDate, toDate, company = '' } = {}) {
     <VERSION>1</VERSION>
     <TALLYREQUEST>EXPORT</TALLYREQUEST>
     <TYPE>COLLECTION</TYPE>
-    <ID>AllLedgersDetailed</ID>
+    <ID>Collection</ID>
   </HEADER>
   <BODY>
     <DESC>
@@ -164,7 +165,7 @@ function buildDetailedLedgerXml({ fromDate, toDate, company = '' } = {}) {
       </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
-          <COLLECTION NAME="AllLedgersDetailed">
+          <COLLECTION NAME="MyDetailedLedgers">
             <TYPE>Ledger</TYPE>
             <FETCH>NAME,GUID,PARENT,OPENINGBALANCE,CLOSINGBALANCE,CURRENTBALANCE,LEDGERFBANKING,PARTYNAME,PARTYMAIL,PARTYADDRESS,PARTYPHONE,PARTYGSTIN,PAN,BILLBYBILL,AFFECTSSTOCK,ISDEEMEDPOSITIVE,ISCOSTCENTREON,ISCOSTCENTRECREATEDON</FETCH>
           </COLLECTION>
