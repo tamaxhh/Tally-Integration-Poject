@@ -13,43 +13,33 @@
 # NOTE: Tally itself runs on your Windows machine — it's not in Docker.
 # The app connects to Tally at host.docker.internal:9000 (see environment below).
 
+version: '3.8'
+
 services:
 
   app:
     build:
       context: ..
-      dockerfile: docker/Dockerfile
+      dockerfile: ./docker/Dockerfile
     ports:
       - "3000:3000"
     environment:
-      NODE_ENV: development
-      PORT: 3000
-
-      # host.docker.internal resolves to the host machine's IP from inside Docker
-      # This is how the containerised app reaches Tally running on your Windows machine
-      TALLY_HOST: host.docker.internal
-      TALLY_PORT: 9000
-      TALLY_TIMEOUT_MS: 5000
-      TALLY_MAX_RETRIES: 2
-
-      REDIS_URL: redis://redis:6379
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/tally_integration
-
-      API_KEYS: dev-key-local-only
-      LOG_LEVEL: debug
-
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=3000
+      - TALLY_HOST=host.docker.internal
+      - TALLY_PORT=9000
+      - TALLY_TIMEOUT_MS=5000
+      - TALLY_MAX_RETRIES=2
+      - API_KEYS=dev-key-local-only
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/tally_integration?ssl=false&sslmode=disable
+      - LOG_LEVEL=info
     depends_on:
       redis:
         condition: service_healthy
       postgres:
         condition: service_healthy
-
-    # Mount source code for hot-reload in development
-    # In production, remove this volume mount
-    # TEMPORARILY DISABLED for Docker debugging
-    # volumes:
-    #   - ./src:/app/src:ro
-
     restart: unless-stopped
 
   redis:
@@ -74,6 +64,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: tally_integration
+      POSTGRES_INITDB_ARGS: "--sync-commit-to-disk=0 --ssl=off"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:

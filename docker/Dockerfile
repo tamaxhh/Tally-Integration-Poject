@@ -43,9 +43,8 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy application source
 COPY --chown=tally:nodejs src/ ./src/
-COPY --chown=tally:nodejs src/index.js ./index.js
 COPY --chown=tally:nodejs config.js ./
-COPY --chown=tally:nodejs .env.example ./
+COPY --chown=tally:nodejs .env.docker ./.env
 
 # Create .env file for container
 RUN echo "NODE_ENV=production" > .env && \
@@ -65,5 +64,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000/live', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
 
-# Start the app
-CMD ["node", "index.js"]
+# Start app
+CMD ["node", "src/index.js"]

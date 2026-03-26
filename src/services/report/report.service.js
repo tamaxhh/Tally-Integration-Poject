@@ -45,7 +45,8 @@ async function fetchReport({ reportName, fromDate, toDate, company }) {
 
   logger.info({ reportName, from, to, company }, 'Fetching report from Tally');
   const xml = buildExportEnvelope({ reportName, fromDate, toDate, company });
-  const xmlResponse = await sendToTally(xml);
+  logger.debug({ xml }, 'XML request being sent to Tally');
+  const xmlResponse = await sendToTally(xml, { timeout: 60000 }); // 60 seconds for large reports
   const parsed = parseXml(xmlResponse);
 
   await cacheManager.set(cacheKey, parsed, config.redis.ttlSeconds);
@@ -183,7 +184,7 @@ async function getBalanceSheet({ fromDate, toDate, company } = {}) {
  */
 async function getDayBook({ fromDate, toDate, company } = {}) {
   // Day book is essentially the voucher list — reuse voucher service
-  const { getVouchers } = require('./voucher.service');
+  const { getVouchers } = require('../voucher/voucher.service');
   return getVouchers({ fromDate, toDate, company });
 }
 

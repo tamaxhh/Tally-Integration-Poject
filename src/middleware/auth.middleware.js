@@ -34,7 +34,7 @@ async function authMiddleware(request, reply) {
   console.log('🔑 API Key present:', !!request.headers['x-api-key']);
   
   // Skip auth for health check — monitoring systems need unauthenticated access
-  if (request.url.startsWith('/health') || request.url.startsWith('/live') || request.url.startsWith('/ready') || request.url === '/') {
+  if (request.url.startsWith('/health') || request.url.startsWith('/live') || request.url.startsWith('/ready') || request.url === '/' || request.url.startsWith('/api/test-connection') || request.url.startsWith('/api/fetch-tally-data') || request.url.startsWith('/api/full-company-data')) {
     console.log('✅ AUTH SKIPPED - public endpoint');
     return;
   }

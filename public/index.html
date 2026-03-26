@@ -248,31 +248,31 @@
                 
                 <div class="form-group">
                     <label for="tallyUrl">Tally Server URL</label>
-                    <input type="text" id="tallyUrl" placeholder="host.docker.internal:9000" value="host.docker.internal:9000">
+                    <input type="text" id="tallyUrl" placeholder="localhost:9000" value="localhost:9000">
                 </div>
 
                 <div class="form-group">
                     <label for="requestType">Request Type</label>
-                    <select id="requestType">
+                    <select id="requestType" onchange="toggleRequiredFields()">
                         <option value="TrialBalance">Trial Balance (Complete Financial Data)</option>
-                        <option value="LedgerBalance">Ledger Balance (Basic Balances)</option>
                         <option value="ListOfLedgers">List of Ledgers (Names Only)</option>
                         <option value="LedgerDetails">Ledger Details (All Fields)</option>
+                        <option value="LedgerTransactions">Ledger Transactions (Detailed Report)</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="ledgerName">Ledger Name (Optional)</label>
+                    <label for="ledgerName">Ledger Name <span id="ledgerNameRequired" style="color: red; display: none;">*</span></label>
                     <input type="text" id="ledgerName" placeholder="e.g., Alfa Provisions">
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="fromDate">From Date (Optional)</label>
+                        <label for="fromDate">From Date <span id="fromDateRequired" style="color: red; display: none;">*</span></label>
                         <input type="date" id="fromDate">
                     </div>
                     <div class="form-group">
-                        <label for="toDate">To Date (Optional)</label>
+                        <label for="toDate">To Date <span id="toDateRequired" style="color: red; display: none;">*</span></label>
                         <input type="date" id="toDate">
                     </div>
                 </div>
@@ -295,8 +295,27 @@
     <script>
         let connectionStatus = false;
 
+        // Global error handler to catch unexpected issues
+        window.addEventListener('error', function(event) {
+            console.error('🔍 FRONTEND DEBUG - Global error:', event.error);
+        });
+
+        // Unhandled promise rejection handler
+        window.addEventListener('unhandledrejection', function(event) {
+            console.error('🔍 FRONTEND DEBUG - Unhandled promise rejection:', event.reason);
+        });
+
         async function testConnection() {
-            const tallyUrl = document.getElementById('tallyUrl').value;
+            const tallyUrlElement = document.getElementById('tallyUrl');
+            
+            if (!tallyUrlElement) {
+                console.error('🔍 FRONTEND DEBUG - tallyUrl element not found');
+                showError('Page not fully loaded. Please wait and try again.');
+                return;
+            }
+            
+            const tallyUrl = tallyUrlElement.value;
+            console.log('🔍 FRONTEND DEBUG - tallyUrl:', tallyUrl);
             
             if (!tallyUrl) {
                 showError('Please enter Tally server URL');
@@ -306,7 +325,9 @@
             showLoading('Testing connection...');
             
             try {
-                const response = await fetch('/api/test-connection', {
+                console.log('🔍 FRONTEND DEBUG - Sending connection request:', { tallyUrl });
+                
+                const response = await fetch('http://localhost:3000/api/test-connection', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -314,7 +335,14 @@
                     body: JSON.stringify({ tallyUrl })
                 });
 
+                console.log('🔍 FRONTEND DEBUG - Connection response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
                 const result = await response.json();
+                console.log('🔍 FRONTEND DEBUG - Connection result:', result);
                 
                 if (result.success && result.connected) {
                     connectionStatus = true;
@@ -338,21 +366,62 @@
                 return;
             }
 
-            const tallyUrl = document.getElementById('tallyUrl').value;
-            const requestType = document.getElementById('requestType').value;
-            const ledgerName = document.getElementById('ledgerName').value;
-            const fromDate = document.getElementById('fromDate').value;
-            const toDate = document.getElementById('toDate').value;
+            // Defensive DOM element checks
+            const tallyUrlElement = document.getElementById('tallyUrl');
+            const requestTypeElement = document.getElementById('requestType');
+            const ledgerNameElement = document.getElementById('ledgerName');
+            const fromDateElement = document.getElementById('fromDate');
+            const toDateElement = document.getElementById('toDate');
+            
+            if (!tallyUrlElement || !requestTypeElement || !ledgerNameElement || !fromDateElement || !toDateElement) {
+                console.error('🔍 FRONTEND DEBUG - Some DOM elements not found:', {
+                    tallyUrl: !!tallyUrlElement,
+                    requestType: !!requestTypeElement,
+                    ledgerName: !!ledgerNameElement,
+                    fromDate: !!fromDateElement,
+                    toDate: !!toDateElement
+                });
+                showError('Page not fully loaded. Please wait and try again.');
+                return;
+            }
+
+            const tallyUrl = tallyUrlElement.value;
+            const requestType = requestTypeElement.value;
+            const ledgerName = ledgerNameElement.value;
+            const fromDate = fromDateElement.value;
+            const toDate = toDateElement.value;
+            
+            console.log('🔍 FRONTEND DEBUG - fetchData params:', {
+                tallyUrl,
+                requestType,
+                ledgerName,
+                fromDate,
+                toDate
+            });
 
             if (!tallyUrl) {
                 showError('Please enter Tally server URL');
                 return;
             }
 
+            // Validate required fields based on request type
+            if (requestType === 'LedgerTransactions' && (!ledgerName || !fromDate || !toDate)) {
+                showError('Ledger Transactions require: Ledger Name, From Date, and To Date');
+                return;
+            }
+
             showLoading('Fetching data from Tally...');
 
             try {
-                const response = await fetch('/api/fetch-tally-data', {
+                console.log('🔍 FRONTEND DEBUG - Sending request body:', {
+                    tallyUrl,
+                    requestType,
+                    ledgerName: ledgerName || '',  // Changed from undefined to empty string
+                    from: fromDate || '',
+                    to: toDate || ''
+                });
+                
+                const response = await fetch('http://localhost:3000/api/fetch-tally-data', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -360,13 +429,20 @@
                     body: JSON.stringify({
                         tallyUrl,
                         requestType,
-                        ledgerName: ledgerName || undefined,
-                        from: fromDate || undefined,
-                        to: toDate || undefined
+                        ledgerName: ledgerName || '',  // Changed from undefined to empty string
+                        from: fromDate || '',
+                        to: toDate || ''
                     })
                 });
 
+                console.log('🔍 FRONTEND DEBUG - Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 const result = await response.json();
+                console.log('🔍 FRONTEND DEBUG - Parsed result:', result);
                 
                 if (result.success) {
                     showSuccess(`✅ Successfully fetched data! Found ${result.data.length} items.`);
@@ -440,23 +516,75 @@
 
         function updateConnectionStatus(connected) {
             const urlInput = document.getElementById('tallyUrl');
+            if (!urlInput) {
+                console.error('🔍 FRONTEND DEBUG - urlInput element not found in updateConnectionStatus');
+                return;
+            }
+            
             if (connected) {
                 urlInput.style.borderColor = '#28a745';
-                urlInput.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.1)';
+                urlInput.style.backgroundColor = '#f0fff4';
             } else {
                 urlInput.style.borderColor = '#dc3545';
-                urlInput.style.boxShadow = '0 0 0 3px rgba(220, 53, 69, 0.1)';
+                urlInput.style.backgroundColor = '#fff5f5';
             }
         }
 
-        // Auto-fill today's dates
+        // Auto-fill today's dates and verify DOM is ready
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 FRONTEND DEBUG - DOM loaded, checking elements...');
+            
+            // Verify all critical elements exist
+            const criticalElements = {
+                tallyUrl: !!document.getElementById('tallyUrl'),
+                requestType: !!document.getElementById('requestType'),
+                ledgerName: !!document.getElementById('ledgerName'),
+                fromDate: !!document.getElementById('fromDate'),
+                toDate: !!document.getElementById('toDate'),
+                results: !!document.getElementById('results')
+            };
+            
+            console.log('🔍 FRONTEND DEBUG - Critical elements status:', criticalElements);
+            
+            const allElementsExist = Object.values(criticalElements).every(Boolean);
+            if (!allElementsExist) {
+                console.error('🔍 FRONTEND DEBUG - Some critical elements missing!');
+                return;
+            }
+            
             const today = new Date();
             const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
             
-            document.getElementById('fromDate').valueAsDate = firstDay;
-            document.getElementById('toDate').valueAsDate = today;
+            const fromDateElement = document.getElementById('fromDate');
+            const toDateElement = document.getElementById('toDate');
+            
+            if (fromDateElement) fromDateElement.valueAsDate = firstDay;
+            if (toDateElement) toDateElement.valueAsDate = today;
+            
+            // Initialize field requirements
+            toggleRequiredFields();
+            
+            console.log('🔍 FRONTEND DEBUG - DOM initialization complete');
         });
+
+        function toggleRequiredFields() {
+            const requestType = document.getElementById('requestType').value;
+            const ledgerNameRequired = document.getElementById('ledgerNameRequired');
+            const fromDateRequired = document.getElementById('fromDateRequired');
+            const toDateRequired = document.getElementById('toDateRequired');
+            
+            // Reset all required indicators
+            if (ledgerNameRequired) ledgerNameRequired.style.display = 'none';
+            if (fromDateRequired) fromDateRequired.style.display = 'none';
+            if (toDateRequired) toDateRequired.style.display = 'none';
+            
+            // Show required fields for LedgerTransactions
+            if (requestType === 'LedgerTransactions') {
+                if (ledgerNameRequired) ledgerNameRequired.style.display = 'inline';
+                if (fromDateRequired) fromDateRequired.style.display = 'inline';
+                if (toDateRequired) toDateRequired.style.display = 'inline';
+            }
+        }
     </script>
 </body>
 </html>

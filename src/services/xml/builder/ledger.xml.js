@@ -9,26 +9,29 @@
 /**
  * Build XML request to get list of all ledgers
  */
-function buildLedgerListXml({ company = '' } = {}) {
+function buildLedgerListXml({ fromDate, toDate } = {}) {
+  const formatDate = (date) => date ? date.toISOString().slice(0, 10).replace(/-/g, '') : '';
+  
   return `<?xml version="1.0" encoding="utf-8"?>
 <ENVELOPE>
   <HEADER>
     <VERSION>1</VERSION>
-    <TALLYREQUEST>Export Data</TALLYREQUEST>
-    <TYPE>Collection</TYPE>
-    <ID>List of Ledgers</ID>
+    <TALLYREQUEST>EXPORT</TALLYREQUEST>
+    <TYPE>COLLECTION</TYPE>
+    <ID>AllLedgers</ID>
   </HEADER>
   <BODY>
     <DESC>
       <STATICVARIABLES>
-        <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
-        ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
+        <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
+        ${fromDate ? `<SVFROMDATE>${formatDate(fromDate)}</SVFROMDATE>` : ''}
+        ${toDate ? `<SVTODATE>${formatDate(toDate)}</SVTODATE>` : ''}
       </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
-          <COLLECTION NAME="List of Ledgers" ISMODIFY="No">
+          <COLLECTION NAME="AllLedgers">
             <TYPE>Ledger</TYPE>
-            <FETCH>NAME</FETCH>
+            <FETCH>NAME,GUID,PARENT,OPENINGBALANCE,CLOSINGBALANCE</FETCH>
           </COLLECTION>
         </TDLMESSAGE>
       </TDL>
@@ -136,9 +139,76 @@ function buildLedgerTransactionsXml({ ledgerName, company = '', from = '', to = 
 </ENVELOPE>`;
 }
 
+/**
+ * Build XML request to get detailed information for all ledgers
+ * Fetches complete ledger data including balances and parent groups
+ */
+function buildDetailedLedgerXml({ fromDate, toDate, company = '' } = {}) {
+  const formatDate = (date) => date ? date.toISOString().slice(0, 10).replace(/-/g, '') : '';
+  
+  return `<?xml version="1.0" encoding="utf-8"?>
+<ENVELOPE>
+  <HEADER>
+    <VERSION>1</VERSION>
+    <TALLYREQUEST>EXPORT</TALLYREQUEST>
+    <TYPE>COLLECTION</TYPE>
+    <ID>AllLedgersDetailed</ID>
+  </HEADER>
+  <BODY>
+    <DESC>
+      <STATICVARIABLES>
+        <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
+        ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
+        ${fromDate ? `<SVFROMDATE>${formatDate(fromDate)}</SVFROMDATE>` : ''}
+        ${toDate ? `<SVTODATE>${formatDate(toDate)}</SVTODATE>` : ''}
+      </STATICVARIABLES>
+      <TDL>
+        <TDLMESSAGE>
+          <COLLECTION NAME="AllLedgersDetailed">
+            <TYPE>Ledger</TYPE>
+            <FETCH>NAME,GUID,PARENT,OPENINGBALANCE,CLOSINGBALANCE,CURRENTBALANCE,LEDGERFBANKING,PARTYNAME,PARTYMAIL,PARTYADDRESS,PARTYPHONE,PARTYGSTIN,PAN,BILLBYBILL,AFFECTSSTOCK,ISDEEMEDPOSITIVE,ISCOSTCENTREON,ISCOSTCENTRECREATEDON</FETCH>
+          </COLLECTION>
+        </TDLMESSAGE>
+      </TDL>
+    </DESC>
+  </BODY>
+</ENVELOPE>`;
+}
+
+/**
+ * Build XML envelope for exporting Tally reports (NOT collections)
+ * Used for built-in reports like Trial Balance, P&L, Balance Sheet
+ */
+function buildExportEnvelope({ reportName, fromDate, toDate, company }) {
+  const formatDate = (date) => date ? date.toISOString().slice(0, 10).replace(/-/g, '') : '';
+  
+  return `<?xml version="1.0" encoding="utf-8"?>
+<ENVELOPE>
+  <HEADER>
+    <VERSION>1</VERSION>
+    <TALLYREQUEST>EXPORT</TALLYREQUEST>
+    <TYPE>DATA</TYPE>
+    <ID>${reportName}</ID>
+  </HEADER>
+  <BODY>
+    <DESC>
+      <STATICVARIABLES>
+        <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
+        ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
+        <SVFROMDATE>${fromDate ? formatDate(fromDate) : ''}</SVFROMDATE>
+        <SVTODATE>${toDate ? formatDate(toDate) : ''}</SVTODATE>
+        <EXPLODEFLAG>Yes</EXPLODEFLAG>
+      </STATICVARIABLES>
+    </DESC>
+  </BODY>
+</ENVELOPE>`;
+}
+
 module.exports = {
+  buildExportEnvelope,
   buildLedgerListXml,
   buildSingleLedgerXml,
+  buildDetailedLedgerXml,
   buildLedgerBalanceXml,
   buildLedgerTransactionsXml,
 };

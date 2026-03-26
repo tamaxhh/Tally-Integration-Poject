@@ -2,7 +2,7 @@
   "name": "tally-integration",
   "version": "1.0.0",
   "description": "Production-grade Tally ERP integration API",
-  "main": "src/api/server.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
     "start:web": "node web-app.js",
