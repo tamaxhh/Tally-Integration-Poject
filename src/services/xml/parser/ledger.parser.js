@@ -1,7 +1,7 @@
 /**
  * src/services/xml/parser/ledger.parser.js
  *
- * Parses Tally XML responses for ledger operations
+ * Parses Tally XML responses for ledger operations - Updated with working logic
  */
 
 'use strict';
@@ -14,30 +14,49 @@ const parser = new XMLParser({
 });
 
 /**
- * Parse ledger list XML response
+ * Parse ledger list XML response - Updated with working logic
  */
 function parseLedgerList(xmlResponse) {
   try {
-    const data = parser.parse(xmlResponse);
     const ledgers = [];
-
-    // Handle different response structures
-    if (data.ENVELOPE?.BODY?.DATA?.COLLECTION?.LEDGER) {
-      const ledgerData = data.ENVELOPE.BODY.DATA.COLLECTION.LEDGER;
-      const ledgerArray = Array.isArray(ledgerData) ? ledgerData : [ledgerData];
-      
-      ledgerArray.forEach(ledger => {
-        const name = extractLedgerName(ledger);
-        if (name) {
-          ledgers.push({ name });
-        }
+    
+    // Extract LEDGER elements using regex - matches working logic
+    const ledgerMatches = xmlResponse.match(/<LEDGER[^>]*>[\s\S]*?<\/LEDGER>/g);
+    
+    if (ledgerMatches) {
+      ledgerMatches.forEach(ledgerXml => {
+        const ledger = {};
+        
+        // Extract basic fields
+        ledger.name = extractField(ledgerXml, 'NAME');
+        ledger.guid = extractField(ledgerXml, 'GUID');
+        ledger.parent = extractField(ledgerXml, 'PARENT');
+        ledger.openingBalance = extractField(ledgerXml, 'OPENINGBALANCE');
+        ledger.closingBalance = extractField(ledgerXml, 'CLOSINGBALANCE');
+        
+        // Extract detailed fields - matching standalone version
+        ledger.gstin = extractField(ledgerXml, 'GSTIN');
+        ledger.bankAccountNumber = extractField(ledgerXml, 'BANKACCOUNTNUMBER');
+        ledger.bankName = extractField(ledgerXml, 'BANKNAME');
+        ledger.pan = extractField(ledgerXml, 'PAN');
+        ledger.email = extractField(ledgerXml, 'EMAIL');
+        
+        // Extract billing details
+        const billingDetails = {};
+        billingDetails.ledgerName = extractField(ledgerXml, 'LEDGERNAME');
+        billingDetails.address = extractField(ledgerXml, 'ADDRESS');
+        billingDetails.state = extractField(ledgerXml, 'STATE');
+        billingDetails.country = extractField(ledgerXml, 'COUNTRY');
+        ledger.billingDetails = billingDetails;
+        
+        ledgers.push(ledger);
       });
     }
 
     return {
       ledgers,
       total: ledgers.length,
-      raw: data,
+      raw: xmlResponse,
     };
   } catch (error) {
     console.error('Error parsing ledger list:', error);
@@ -153,35 +172,12 @@ function parseLedgerTransactions(xmlResponse, ledgerName, from, to) {
 }
 
 /**
- * Helper function to extract ledger name from various XML structures
+ * Helper function to extract field value from XML - from working logic
  */
-function extractLedgerName(ledger) {
-  if (!ledger) return null;
-  
-  // Try different possible name fields
-  if (ledger['LANGUAGENAME.LIST']?.['NAME.LIST']?.NAME) {
-    return ledger['LANGUAGENAME.LIST']['NAME.LIST'].NAME.replace(/&#13;&#10;/g, '').trim();
-  }
-  
-  if (ledger.LANGUAGENAME?.LIST?.NAME?.LIST) {
-    const nameList = Array.isArray(ledger.LANGUAGENAME.LIST.NAME.LIST) 
-      ? ledger.LANGUAGENAME.LIST.NAME.LIST 
-      : [ledger.LANGUAGENAME.LIST.NAME.LIST];
-    
-    if (nameList.length > 0 && nameList[0].NAME) {
-      return nameList[0].NAME.replace(/&#13;&#10;/g, '').trim();
-    }
-  }
-  
-  if (ledger.NAME) {
-    return ledger.NAME.replace(/&#13;&#10;/g, '').trim();
-  }
-  
-  if (ledger.LANGUAGENAME?.LIST?.NAME) {
-    return ledger.LANGUAGENAME.LIST.NAME.replace(/&#13;&#10;/g, '').trim();
-  }
-  
-  return null;
+function extractField(xml, fieldName) {
+  const regex = new RegExp(`<${fieldName}[^>]*>([^<]*)<\/${fieldName}>`, 'i');
+  const match = xml.match(regex);
+  return match ? match[1].trim() : null;
 }
 
 /**
@@ -273,4 +269,5 @@ module.exports = {
   parseSingleLedger,
   parseLedgerBalances,
   parseLedgerTransactions,
+  extractField,
 };

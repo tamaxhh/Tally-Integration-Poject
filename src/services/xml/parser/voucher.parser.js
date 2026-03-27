@@ -19,34 +19,50 @@ const parser = new XMLParser({
 });
 
 /**
- * Parse voucher list XML response
+ * Parse voucher list XML response - Updated to match standalone regex approach
  */
 function parseVoucherList(xmlResponse) {
   try {
-    const data = parser.parse(xmlResponse);
+    // Use regex-based parsing like the working standalone version
     const vouchers = [];
-
-    if (data.ENVELOPE?.BODY?.DATA?.COLLECTION?.VOUCHER) {
-      const voucherData = data.ENVELOPE.BODY.DATA.COLLECTION.VOUCHER;
-      const voucherArray = Array.isArray(voucherData) ? voucherData : [voucherData];
-      
-      voucherArray.forEach(voucher => {
-        vouchers.push({
-          guid: voucher.GUID,
-          date: voucher.DATE,
-          voucherType: voucher.VOUCHERTYPENAME,
-          voucherNumber: voucher.VOUCHERNUMBER,
-          narration: voucher.NARRATION,
-          ledgerEntries: parseLedgerEntries(voucher.ALLLEDGERENTRIES?.LEDGERENTRIES),
-          amount: parseAmount(voucher.AMOUNT),
-        });
+    
+    // Extract VOUCHER elements using regex - matches working logic
+    const voucherMatches = xmlResponse.match(/<VOUCHER[^>]*>[\s\S]*?<\/VOUCHER>/g);
+    
+    if (voucherMatches) {
+      voucherMatches.forEach(voucherXml => {
+        const voucher = {};
+        
+        // Extract basic fields using regex - matches standalone logic
+        voucher.guid = extractField(voucherXml, 'GUID');
+        voucher.date = extractField(voucherXml, 'DATE');
+        voucher.voucherType = extractField(voucherXml, 'VOUCHERTYPENAME');
+        voucher.voucherNumber = extractField(voucherXml, 'VOUCHERNUMBER');
+        voucher.narration = extractField(voucherXml, 'NARRATION');
+        voucher.partyName = extractField(voucherXml, 'PARTYNAME');
+        voucher.amount = extractField(voucherXml, 'AMOUNT');
+        
+        // Extract ledger entries using regex - matches standalone logic
+        const ledgerEntryMatches = voucherXml.match(/<ALLLEDGERENTRIES\.LIST[^>]*>[\s\S]*?<\/ALLLEDGERENTRIES\.LIST>/g);
+        if (ledgerEntryMatches) {
+          voucher.ledgerEntries = ledgerEntryMatches.map(entryXml => ({
+            ledgerName: extractField(entryXml, 'LEDGERNAME'),
+            amount: extractField(entryXml, 'AMOUNT'),
+            ledgerType: extractField(entryXml, 'ISDEEMEDPOSITIVE')
+          }));
+        }
+        
+        // Only add voucher if it has meaningful data
+        if (voucher.guid || voucher.date || voucher.voucherType || voucher.voucherNumber) {
+          vouchers.push(voucher);
+        }
       });
     }
 
     return {
       vouchers,
       total: vouchers.length,
-      raw: data,
+      raw: xmlResponse,
     };
   } catch (error) {
     console.error('Error parsing voucher list:', error);
@@ -55,7 +71,16 @@ function parseVoucherList(xmlResponse) {
 }
 
 /**
- * Parse and normalize voucher data
+ * Helper function to extract field value from XML - matches standalone logic
+ */
+function extractField(xml, fieldName) {
+  const regex = new RegExp(`<${fieldName}[^>]*>([^<]*)</${fieldName}>`, 'i');
+  const match = xml.match(regex);
+  return match ? match[1].trim() : null;
+}
+
+/**
+ * Parse and normalize voucher data - Updated to use regex extraction
  */
 function normaliseVoucher(voucher) {
   return {
@@ -64,28 +89,12 @@ function normaliseVoucher(voucher) {
     voucherType: voucher.VOUCHERTYPENAME,
     voucherNumber: voucher.VOUCHERNUMBER,
     narration: voucher.NARRATION,
-    ledgerEntries: parseLedgerEntries(voucher.ALLLEDGERENTRIES?.LEDGERENTRIES),
-    amount: parseAmount(voucher.AMOUNT),
-    party: voucher.PARTYNAME,
+    partyName: voucher.PARTYNAME,
+    ledgerEntries: voucher.ledgerEntries || [],
+    amount: voucher.AMOUNT,
     reference: voucher.REFERENCE,
     reversedVoucher: voucher.ISREVERSEDVOUCHER === 'Yes',
   };
-}
-
-/**
- * Parse ledger entries from voucher
- */
-function parseLedgerEntries(entries) {
-  if (!entries) return [];
-  
-  const entryArray = Array.isArray(entries) ? entries : [entries];
-  return entryArray.map(entry => ({
-    ledgerName: entry.LEDGERNAME,
-    amount: parseAmount(entry.AMOUNT),
-    isDebit: entry.ISDEEMED === 'Yes',
-    rate: parseAmount(entry.RATE),
-    quantity: parseAmount(entry.AMOUNT) / parseAmount(entry.RATE) || 0,
-  }));
 }
 
 /**
@@ -108,4 +117,5 @@ function parseAmount(value) {
 module.exports = {
   parseVoucherList,
   normaliseVoucher,
+  extractField,
 };

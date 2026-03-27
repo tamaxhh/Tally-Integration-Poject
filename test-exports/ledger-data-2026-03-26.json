@@ -1,0 +1,406 @@
+{
+  "metadata": {
+    "success": true,
+    "total": 95,
+    "company": "Default",
+    "timestamp": "2026-03-26T13:31:44.723Z",
+    "tallyHost": "localhost",
+    "tallyPort": "9000",
+    "exportedAt": "2026-03-26T13:31:44.723Z"
+  },
+  "summary": {
+    "totalLedgers": 95,
+    "withBalances": 95,
+    "withOpeningBalance": 0,
+    "withClosingBalance": 0,
+    "parentGroups": [],
+    "balanceSummary": {
+      "totalOpening": 0,
+      "totalClosing": 0,
+      "positiveBalances": 0,
+      "negativeBalances": 0
+    }
+  },
+  "ledgers": [
+    {
+      "name": "Alfa Provisions",
+      "originalData": {}
+    },
+    {
+      "name": "Anup and Co",
+      "originalData": {}
+    },
+    {
+      "name": "A to Z Stationers",
+      "originalData": {}
+    },
+    {
+      "name": "AVN Traders",
+      "originalData": {}
+    },
+    {
+      "name": "Bank Charges",
+      "originalData": {}
+    },
+    {
+      "name": "Bank Interest",
+      "originalData": {}
+    },
+    {
+      "name": "Bank Loans",
+      "originalData": {}
+    },
+    {
+      "name": "Bank of Baroda-Savings A/c",
+      "originalData": {}
+    },
+    {
+      "name": "BMS Mart",
+      "originalData": {}
+    },
+    {
+      "name": "Candles and Matches",
+      "originalData": {}
+    },
+    {
+      "name": "Cash",
+      "originalData": {}
+    },
+    {
+      "name": "CGST",
+      "originalData": {}
+    },
+    {
+      "name": "CGST (Input Tax Credit)",
+      "originalData": {}
+    },
+    {
+      "name": "CGST ITC",
+      "originalData": {}
+    },
+    {
+      "name": "CGST Payable",
+      "originalData": {}
+    },
+    {
+      "name": "Commodities",
+      "originalData": {}
+    },
+    {
+      "name": "Computer",
+      "originalData": {}
+    },
+    {
+      "name": "Confident Traders",
+      "originalData": {}
+    },
+    {
+      "name": "Conveyance",
+      "originalData": {}
+    },
+    {
+      "name": "DBS Bank A/c",
+      "originalData": {}
+    },
+    {
+      "name": "Drawings of Owner",
+      "originalData": {}
+    },
+    {
+      "name": "Ecko Honey Farms",
+      "originalData": {}
+    },
+    {
+      "name": "Electricity Charges",
+      "originalData": {}
+    },
+    {
+      "name": "Electricity Deposit",
+      "originalData": {}
+    },
+    {
+      "name": "Express Stores",
+      "originalData": {}
+    },
+    {
+      "name": "Fright",
+      "originalData": {}
+    },
+    {
+      "name": "Furniture",
+      "originalData": {}
+    },
+    {
+      "name": "GST Provision",
+      "originalData": {}
+    },
+    {
+      "name": "GST Sales",
+      "originalData": {}
+    },
+    {
+      "name": "HDFC Current A/c",
+      "originalData": {}
+    },
+    {
+      "name": "HKN Enterprises",
+      "originalData": {}
+    },
+    {
+      "name": "IGST",
+      "originalData": {}
+    },
+    {
+      "name": "IGST (Input Tax Credit)",
+      "originalData": {}
+    },
+    {
+      "name": "IGST ITC",
+      "originalData": {}
+    },
+    {
+      "name": "IGST Payable",
+      "originalData": {}
+    },
+    {
+      "name": "Import Purchases",
+      "originalData": {}
+    },
+    {
+      "name": "Indus Stores",
+      "originalData": {}
+    },
+    {
+      "name": "Insurance",
+      "originalData": {}
+    },
+    {
+      "name": "K. L. Stores",
+      "originalData": {}
+    },
+    {
+      "name": "Land and Building",
+      "originalData": {}
+    },
+    {
+      "name": "Maruthi Van",
+      "originalData": {}
+    },
+    {
+      "name": "MM Frozen Foods",
+      "originalData": {}
+    },
+    {
+      "name": "Office Supply Account",
+      "originalData": {}
+    },
+    {
+      "name": "Owner's Capital",
+      "originalData": {}
+    },
+    {
+      "name": "Packing Charges",
+      "originalData": {}
+    },
+    {
+      "name": "Packing Cost",
+      "originalData": {}
+    },
+    {
+      "name": "Printing & Stationary",
+      "originalData": {}
+    },
+    {
+      "name": "Profit & Loss A/c",
+      "originalData": {}
+    },
+    {
+      "name": "Purchase",
+      "originalData": {}
+    },
+    {
+      "name": "Purchase Exempt",
+      "originalData": {}
+    },
+    {
+      "name": "Purchase Returns",
+      "originalData": {}
+    },
+    {
+      "name": "Purchase under RCM",
+      "originalData": {}
+    },
+    {
+      "name": "Ramesh's Capital A/c",
+      "originalData": {}
+    },
+    {
+      "name": "Refrigeration Cost",
+      "originalData": {}
+    },
+    {
+      "name": "Rent",
+      "originalData": {}
+    },
+    {
+      "name": "Rent",
+      "originalData": {}
+    },
+    {
+      "name": "Rent Advance",
+      "originalData": {}
+    },
+    {
+      "name": "Retail Mart",
+      "originalData": {}
+    },
+    {
+      "name": "Rounding Off",
+      "originalData": {}
+    },
+    {
+      "name": "RV Stores",
+      "originalData": {}
+    },
+    {
+      "name": "Sai Farms",
+      "originalData": {}
+    },
+    {
+      "name": "Salary Account",
+      "originalData": {}
+    },
+    {
+      "name": "Salary Advance",
+      "originalData": {}
+    },
+    {
+      "name": "Sales",
+      "originalData": {}
+    },
+    {
+      "name": "Sales Commission",
+      "originalData": {}
+    },
+    {
+      "name": "Sales East",
+      "originalData": {}
+    },
+    {
+      "name": "Sales Exempt",
+      "originalData": {}
+    },
+    {
+      "name": "Sales Export",
+      "originalData": {}
+    },
+    {
+      "name": "Sales Nil Rated",
+      "originalData": {}
+    },
+    {
+      "name": "Sales North",
+      "originalData": {}
+    },
+    {
+      "name": "Sales Return",
+      "originalData": {}
+    },
+    {
+      "name": "Sales South",
+      "originalData": {}
+    },
+    {
+      "name": "Sales West",
+      "originalData": {}
+    },
+    {
+      "name": "Salt and Pepper",
+      "originalData": {}
+    },
+    {
+      "name": "SBI OD A/c",
+      "originalData": {}
+    },
+    {
+      "name": "Secured Loan from Ganeshji",
+      "originalData": {}
+    },
+    {
+      "name": "SGST",
+      "originalData": {}
+    },
+    {
+      "name": "SGST (Input Tax Credit)",
+      "originalData": {}
+    },
+    {
+      "name": "SGST ITC",
+      "originalData": {}
+    },
+    {
+      "name": "SGST Payable",
+      "originalData": {}
+    },
+    {
+      "name": "SLV Enterprises",
+      "originalData": {}
+    },
+    {
+      "name": "S.M Traders",
+      "originalData": {}
+    },
+    {
+      "name": "Sunday to Monday",
+      "originalData": {}
+    },
+    {
+      "name": "Sundry Expenses",
+      "originalData": {}
+    },
+    {
+      "name": "Sun Stores",
+      "originalData": {}
+    },
+    {
+      "name": "SuperFoods",
+      "originalData": {}
+    },
+    {
+      "name": "Telephone Bill",
+      "originalData": {}
+    },
+    {
+      "name": "Telephone Deposit",
+      "originalData": {}
+    },
+    {
+      "name": "Titan Stores",
+      "originalData": {}
+    },
+    {
+      "name": "Transportation",
+      "originalData": {}
+    },
+    {
+      "name": "Transportation Charges",
+      "originalData": {}
+    },
+    {
+      "name": "Transports",
+      "originalData": {}
+    },
+    {
+      "name": "VKN Transports",
+      "originalData": {}
+    },
+    {
+      "name": "Water Bill Charges",
+      "originalData": {}
+    },
+    {
+      "name": "Zeta Provisions",
+      "originalData": {}
+    }
+  ]
+}

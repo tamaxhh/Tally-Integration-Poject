@@ -17,7 +17,7 @@
 'use strict';
 
 const { sendToTally } = require('../connectors/tally.client.js');
-const { buildVoucherListXml, buildSingleVoucherXml } = require('../xml/builder/voucher.xml');
+const { buildVoucherListXml, buildSingleVoucherXml, buildDetailedVoucherXml } = require('../xml/builder/voucher.xml');
 const { parseVoucherList, normaliseVoucher } = require('../xml/parser/voucher.parser');
 const { parseXml, ensureArray, safeGet } = require('../xml/parser/index');
 const cacheManager = require('../../cache/simple-cache');
@@ -27,6 +27,14 @@ const logger = require('../../config/logger');
 const CACHE_PREFIX = 'tally:vouchers';
 // Vouchers get shorter TTL than ledgers — data changes more frequently
 const VOUCHER_TTL = 120; // 2 minutes for vouchers
+
+/**
+ * Helper function to format date as YYYYMMDD (Tally format)
+ */
+function formatDateForTally(date) {
+  if (!date) return '';
+  return date.toISOString().slice(0, 10).replace(/-/g, '');
+}
 
 /**
  * Get vouchers within a date range.
@@ -41,8 +49,8 @@ const VOUCHER_TTL = 120; // 2 minutes for vouchers
  */
 async function getVouchers({ fromDate, toDate, voucherType, company = '', bypassCache = false } = {}) {
   // Build a deterministic cache key from all query parameters
-  const from = fromDate.toISOString().split('T')[0];
-  const to   = toDate.toISOString().split('T')[0];
+  const from = formatDateForTally(fromDate);
+  const to   = formatDateForTally(toDate);
   const typeSlug = voucherType ? voucherType.toLowerCase().replace(/\s+/g, '_') : 'all';
   const cacheKey = `${CACHE_PREFIX}:${company || 'default'}:${from}:${to}:${typeSlug}`;
 
@@ -55,7 +63,7 @@ async function getVouchers({ fromDate, toDate, voucherType, company = '', bypass
   }
 
   logger.info({ from, to, voucherType, company }, 'Fetching vouchers from Tally');
-  const xmlRequest = buildVoucherListXml({ fromDate, toDate, voucherType, company });
+  const xmlRequest = buildDetailedVoucherXml({ fromDate: from, toDate: to, voucherType, company });
   const xmlResponse = await sendToTally(xmlRequest);
   const result = parseVoucherList(xmlResponse);
 
@@ -66,21 +74,21 @@ async function getVouchers({ fromDate, toDate, voucherType, company = '', bypass
 }
 
 /**
- * Get a single voucher by number.
+ * Get a single voucher by GUID.
  *
  * @param {object} options
- * @param {string} options.voucherNumber
+ * @param {string} options.voucherGuid
  * @param {string} [options.company]
  * @returns {Promise<{ voucher: object|null, fromCache: boolean }>}
  */
-async function getVoucherByNumber({ voucherNumber, company = '' } = {}) {
-  const slug = voucherNumber.toLowerCase().replace(/[^a-z0-9]/g, '_');
+async function getVoucherByGuid({ voucherGuid, company = '' } = {}) {
+  const slug = voucherGuid.toLowerCase().replace(/[^a-z0-9]/g, '_');
   const cacheKey = `${CACHE_PREFIX}:single:${company || 'default'}:${slug}`;
 
   const cached = await cacheManager.get(cacheKey);
   if (cached) return { ...cached, fromCache: true };
 
-  const xmlRequest = buildSingleVoucherXml({ voucherNumber, company });
+  const xmlRequest = buildSingleVoucherXml({ voucherGuid, company });
   const xmlResponse = await sendToTally(xmlRequest);
 
   // Single voucher response parsing
@@ -136,4 +144,4 @@ async function getVoucherSummary({ fromDate, toDate, company = '' } = {}) {
   return summary;
 }
 
-module.exports = { getVouchers, getVoucherByNumber, getVoucherSummary };
+module.exports = { getVouchers, getVoucherByGuid, getVoucherSummary };

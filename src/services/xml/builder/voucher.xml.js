@@ -10,8 +10,6 @@
  * Build XML request to get list of vouchers
  */
 function buildVoucherListXml({ company = '', fromDate = '', toDate = '', voucherType = '' } = {}) {
-  const formatDate = (date) => date ? date.toISOString().slice(0, 10).replace(/-/g, '') : '';
-  
   return `<?xml version="1.0" encoding="utf-8"?>
 <ENVELOPE>
   <HEADER>
@@ -25,14 +23,14 @@ function buildVoucherListXml({ company = '', fromDate = '', toDate = '', voucher
       <STATICVARIABLES>
         <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
         ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
-        ${fromDate ? `<SVFROMDATE>${formatDate(fromDate)}</SVFROMDATE>` : ''}
-        ${toDate ? `<SVTODATE>${formatDate(toDate)}</SVTODATE>` : ''}
+        ${fromDate ? `<SVFROMDATE>${fromDate}</SVFROMDATE>` : ''}
+        ${toDate ? `<SVTODATE>${toDate}</SVTODATE>` : ''}
       </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
           <COLLECTION NAME="AllVouchers">
             <TYPE>Voucher</TYPE>
-            <FETCH>DATE,VOUCHERTYPENAME,NARRATION,ALLLEDGERENTRIES.LIST:*</FETCH>
+            <FETCH>DATE,VOUCHERTYPENAME,NARRATION,PARTYNAME,AMOUNT,ALLLEDGERENTRIES.LIST:*</FETCH>
             ${voucherType ? `<FILTER>VOUCHERTYPENAME = "${voucherType}"</FILTER>` : ''}
           </COLLECTION>
         </TDLMESSAGE>
@@ -47,30 +45,28 @@ function buildVoucherListXml({ company = '', fromDate = '', toDate = '', voucher
  * Fetches complete voucher data including all ledger entries and amounts
  */
 function buildDetailedVoucherXml({ company = '', fromDate = '', toDate = '', voucherType = '' } = {}) {
-  const formatDate = (date) => date ? date.toISOString().slice(0, 10).replace(/-/g, '') : '';
-  
+  // Ignore voucherType parameter until we fix TDL filter syntax
   return `<?xml version="1.0" encoding="utf-8"?>
 <ENVELOPE>
   <HEADER>
     <VERSION>1</VERSION>
     <TALLYREQUEST>EXPORT</TALLYREQUEST>
     <TYPE>COLLECTION</TYPE>
-    <ID>Collection</ID>
+    <ID>AllVouchers</ID>
   </HEADER>
   <BODY>
     <DESC>
       <STATICVARIABLES>
         <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
         ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
-        ${fromDate ? `<SVFROMDATE>${formatDate(fromDate)}</SVFROMDATE>` : ''}
-        ${toDate ? `<SVTODATE>${formatDate(toDate)}</SVTODATE>` : ''}
-        ${voucherType ? `<VOUCHERTYPENAME>${voucherType}</VOUCHERTYPENAME>` : ''}
+        ${fromDate ? `<SVFROMDATE>${fromDate}</SVFROMDATE>` : ''}
+        ${toDate ? `<SVTODATE>${toDate}</SVTODATE>` : ''}
       </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
-          <COLLECTION NAME="MyDetailedVouchers">
+          <COLLECTION NAME="AllVouchers">
             <TYPE>Voucher</TYPE>
-            <FETCH>GUID,DATE,VOUCHERTYPENAME,VOUCHERNUMBER,NARRATION,LEDGERENTRIES,AMOUNT</FETCH>
+            <FETCH>DATE,VOUCHERTYPENAME,NARRATION,PARTYNAME,AMOUNT,ALLLEDGERENTRIES.LIST:*</FETCH>
           </COLLECTION>
         </TDLMESSAGE>
       </TDL>
@@ -87,21 +83,21 @@ function buildSingleVoucherXml({ voucherGuid, company = '' } = {}) {
 <ENVELOPE>
   <HEADER>
     <VERSION>1</VERSION>
-    <TALLYREQUEST>Export Data</TALLYREQUEST>
-    <TYPE>Collection</TYPE>
+    <TALLYREQUEST>EXPORT</TALLYREQUEST>
+    <TYPE>COLLECTION</TYPE>
     <ID>Voucher Details</ID>
   </HEADER>
   <BODY>
     <DESC>
       <STATICVARIABLES>
-        <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
+        <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
         ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
       </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
           <COLLECTION NAME="Voucher Details" ISMODIFY="No">
             <TYPE>Voucher</TYPE>
-            <FETCH>GUID,DATE,VOUCHERTYPENAME,VOUCHERNUMBER,NARRATION,LEDGERENTRIES,AMOUNT</FETCH>
+            <FETCH>GUID,DATE,VOUCHERTYPENAME,VOUCHERNUMBER,NARRATION,PARTYNAME,AMOUNT,ALLLEDGERENTRIES.LIST:*</FETCH>
             <FILTER>GUID = "${voucherGuid}"</FILTER>
           </COLLECTION>
         </TDLMESSAGE>

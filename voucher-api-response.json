@@ -1,0 +1,1171 @@
+﻿{
+    "success":  true,
+    "data":  [
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000000b",
+                     "date":  "20200401",
+                     "voucherType":  "Purchase Order",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "AVN Traders\u0026#13;\u0026#10;",
+                     "amount":  "16130.60",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "AVN Traders\u0026#13;\u0026#10;",
+                                               "amount":  "16130.60",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Purchase\u0026#13;\u0026#10;",
+                                               "amount":  "-13670.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "CGST",
+                                               "amount":  "-1230.30",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "SGST",
+                                               "amount":  "-1230.30",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000000a3",
+                     "date":  "20200401",
+                     "voucherType":  "Sales Order",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "RV Stores\u0026#13;\u0026#10;",
+                     "amount":  "-13962.60",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "RV Stores\u0026#13;\u0026#10;",
+                                               "amount":  "-13962.60",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales",
+                                               "amount":  "10940.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "IGST",
+                                               "amount":  "1022.60",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Transportation Charges",
+                                               "amount":  "2000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000115",
+                     "date":  "20200401",
+                     "voucherType":  "Delivery Note",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "RV Stores\u0026#13;\u0026#10;",
+                     "amount":  "-13962.60",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "RV Stores\u0026#13;\u0026#10;",
+                                               "amount":  "-13962.60",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales",
+                                               "amount":  "10940.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "IGST",
+                                               "amount":  "1022.60",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Transportation Charges",
+                                               "amount":  "2000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001ed",
+                     "date":  "20200401",
+                     "voucherType":  "Memorandum",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "-3000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Office Supply Account",
+                                               "amount":  "-3000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Cash",
+                                               "amount":  "3000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001ee",
+                     "date":  "20200401",
+                     "voucherType":  "Memorandum",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "-50000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Sales",
+                                               "amount":  "-50000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Alfa Provisions\u0026#13;\u0026#10;",
+                                               "amount":  "50000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000002e8",
+                     "date":  "20200401",
+                     "voucherType":  "Journal",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "-121212.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Alfa Provisions\u0026#13;\u0026#10;",
+                                               "amount":  "-121212.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Cash",
+                                               "amount":  "121212.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001fa",
+                     "date":  "20200401",
+                     "voucherType":  "Journal",
+                     "voucherNumber":  "2",
+                     "narration":  "Recurrent Rent expenses",
+                     "partyName":  "",
+                     "amount":  "-50000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Rent",
+                                               "amount":  "-50000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Bank of Baroda-Savings A/c",
+                                               "amount":  "50000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000023b",
+                     "date":  "20200401",
+                     "voucherType":  "Stock Journal",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "-5000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  null,
+                                               "amount":  null,
+                                               "ledgerType":  null
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000023c",
+                     "date":  "20200401",
+                     "voucherType":  "Stock Journal",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "-80.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  null,
+                                               "amount":  null,
+                                               "ledgerType":  null
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000023d",
+                     "date":  "20200401",
+                     "voucherType":  "Debit Note",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "Confident Traders\u0026#13;\u0026#10;",
+                     "amount":  "-2214.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Confident Traders\u0026#13;\u0026#10;",
+                                               "amount":  "-2214.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Purchase\u0026#13;\u0026#10;",
+                                               "amount":  "2214.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000254",
+                     "date":  "20200401",
+                     "voucherType":  "Rejections In",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "Express Stores\u0026#13;\u0026#10;",
+                     "amount":  "",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  null,
+                                               "amount":  null,
+                                               "ledgerType":  null
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000270",
+                     "date":  "20200401",
+                     "voucherType":  "Credit Note",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "Express Stores\u0026#13;\u0026#10;",
+                     "amount":  "1400.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Express Stores\u0026#13;\u0026#10;",
+                                               "amount":  "1400.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales Nil Rated\u0026#13;\u0026#10;",
+                                               "amount":  "-1400.00",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000002bc",
+                     "date":  "20200401",
+                     "voucherType":  "Sales",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "Anup and Co",
+                     "amount":  "-1000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Anup and Co",
+                                               "amount":  "-1000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales South",
+                                               "amount":  "1000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000002bd",
+                     "date":  "20200401",
+                     "voucherType":  "Sales",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "A to Z Stationers\u0026#13;\u0026#10;",
+                     "amount":  "-300.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "A to Z Stationers\u0026#13;\u0026#10;",
+                                               "amount":  "-300.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales North",
+                                               "amount":  "300.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000002be",
+                     "date":  "20200401",
+                     "voucherType":  "Sales",
+                     "voucherNumber":  "3",
+                     "narration":  "",
+                     "partyName":  "K. L. Stores\u0026#13;\u0026#10;",
+                     "amount":  "-800.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "K. L. Stores\u0026#13;\u0026#10;",
+                                               "amount":  "-800.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales East",
+                                               "amount":  "800.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000002bf",
+                     "date":  "20200401",
+                     "voucherType":  "Sales",
+                     "voucherNumber":  "4",
+                     "narration":  "",
+                     "partyName":  "Sunday to Monday\u0026#13;\u0026#10;",
+                     "amount":  "-800.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Sunday to Monday\u0026#13;\u0026#10;",
+                                               "amount":  "-800.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales West",
+                                               "amount":  "800.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000002d2",
+                     "date":  "20200401",
+                     "voucherType":  "Sales",
+                     "voucherNumber":  "5",
+                     "narration":  "",
+                     "partyName":  "Sunday to Monday\u0026#13;\u0026#10;",
+                     "amount":  "-800.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Sunday to Monday\u0026#13;\u0026#10;",
+                                               "amount":  "-800.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales West",
+                                               "amount":  "800.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000002dd",
+                     "date":  "20200401",
+                     "voucherType":  "Sales",
+                     "voucherNumber":  "6",
+                     "narration":  "",
+                     "partyName":  "Anup and Co",
+                     "amount":  "-1000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Anup and Co",
+                                               "amount":  "-1000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "GST Sales",
+                                               "amount":  "1000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000002de",
+                     "date":  "20200401",
+                     "voucherType":  "Sales",
+                     "voucherNumber":  "7",
+                     "narration":  "",
+                     "partyName":  "Anup and Co",
+                     "amount":  "-1000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Anup and Co",
+                                               "amount":  "-1000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "GST Sales",
+                                               "amount":  "1000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000002df",
+                     "date":  "20200401",
+                     "voucherType":  "Sales",
+                     "voucherNumber":  "8",
+                     "narration":  "",
+                     "partyName":  "Anup and Co",
+                     "amount":  "-1000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Anup and Co",
+                                               "amount":  "-1000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "GST Sales",
+                                               "amount":  "1000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001f7",
+                     "date":  "20200402",
+                     "voucherType":  "Journal",
+                     "voucherNumber":  "3",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "-3000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Drawings of Owner",
+                                               "amount":  "-3000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Owner\u0026apos;s Capital\u0026#13;\u0026#10;",
+                                               "amount":  "3000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001f3",
+                     "date":  "20200402",
+                     "voucherType":  "Journal",
+                     "voucherNumber":  "4",
+                     "narration":  "Recurrent electicity charges",
+                     "partyName":  "",
+                     "amount":  "-10000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Electricity Charges\u0026#13;\u0026#10;",
+                                               "amount":  "-10000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Bank of Baroda-Savings A/c",
+                                               "amount":  "10000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000022",
+                     "date":  "20200403",
+                     "voucherType":  "Receipt Note",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "AVN Traders\u0026#13;\u0026#10;",
+                     "amount":  "16130.60",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "AVN Traders\u0026#13;\u0026#10;",
+                                               "amount":  "16130.60",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Purchase\u0026#13;\u0026#10;",
+                                               "amount":  "-13670.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "CGST",
+                                               "amount":  "-1230.30",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "SGST",
+                                               "amount":  "-1230.30",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000023",
+                     "date":  "20200403",
+                     "voucherType":  "Purchase",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "AVN Traders\u0026#13;\u0026#10;",
+                     "amount":  "16130.60",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "AVN Traders\u0026#13;\u0026#10;",
+                                               "amount":  "16130.60",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Purchase\u0026#13;\u0026#10;",
+                                               "amount":  "-13670.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "CGST",
+                                               "amount":  "-1230.30",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "SGST",
+                                               "amount":  "-1230.30",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000000d",
+                     "date":  "20200405",
+                     "voucherType":  "Purchase Order",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "MM Frozen Foods\u0026#13;\u0026#10;",
+                     "amount":  "$594.05 @ ? 59.9998/$ = ? 35642.88",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "MM Frozen Foods\u0026#13;\u0026#10;",
+                                               "amount":  "$594.05 @ ? 59.9998/$ = ? 35642.88",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Import Purchases\u0026#13;\u0026#10;",
+                                               "amount":  "-$530.40 @ ? 60/$ = -? 31824.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "IGST",
+                                               "amount":  "-$63.65 @ ? 59.9981/$ = -? 3818.88",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000022e",
+                     "date":  "20200405",
+                     "voucherType":  "Physical Stock",
+                     "voucherNumber":  "1",
+                     "narration":  "Monthly Physical Stock verification",
+                     "partyName":  "",
+                     "amount":  "",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  null,
+                                               "amount":  null,
+                                               "ledgerType":  null
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000263",
+                     "date":  "20200405",
+                     "voucherType":  "Rejections Out",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "Sai Farms\u0026#13;\u0026#10;",
+                     "amount":  "",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  null,
+                                               "amount":  null,
+                                               "ledgerType":  null
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000000a4",
+                     "date":  "20200407",
+                     "voucherType":  "Sales Order",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "RV Stores\u0026#13;\u0026#10;",
+                     "amount":  "-4080.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "RV Stores\u0026#13;\u0026#10;",
+                                               "amount":  "-4080.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales Nil Rated\u0026#13;\u0026#10;",
+                                               "amount":  "3580.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Transportation Charges",
+                                               "amount":  "500.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000114",
+                     "date":  "20200407",
+                     "voucherType":  "Delivery Note",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "RV Stores\u0026#13;\u0026#10;",
+                     "amount":  "-4080.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "RV Stores\u0026#13;\u0026#10;",
+                                               "amount":  "-4080.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales Nil Rated\u0026#13;\u0026#10;",
+                                               "amount":  "3580.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Transportation Charges",
+                                               "amount":  "500.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000007e",
+                     "date":  "20200410",
+                     "voucherType":  "Receipt Note",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "MM Frozen Foods\u0026#13;\u0026#10;",
+                     "amount":  "$594.05 @ ? 59.9998/$ = ? 35642.88",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "MM Frozen Foods\u0026#13;\u0026#10;",
+                                               "amount":  "$594.05 @ ? 59.9998/$ = ? 35642.88",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Import Purchases\u0026#13;\u0026#10;",
+                                               "amount":  "-$530.40 @ ? 60/$ = -? 31824.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "IGST",
+                                               "amount":  "-$63.65 @ ? 59.9981/$ = -? 3818.88",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000255",
+                     "date":  "20200410",
+                     "voucherType":  "Rejections In",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "A to Z Stationers\u0026#13;\u0026#10;",
+                     "amount":  "",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  null,
+                                               "amount":  null,
+                                               "ledgerType":  null
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000264",
+                     "date":  "20200410",
+                     "voucherType":  "Rejections Out",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "Ecko Honey Farms\u0026#13;\u0026#10;",
+                     "amount":  "",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  null,
+                                               "amount":  null,
+                                               "ledgerType":  null
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000000a5",
+                     "date":  "20200412",
+                     "voucherType":  "Sales Order",
+                     "voucherNumber":  "3",
+                     "narration":  "",
+                     "partyName":  "Sun Stores\u0026#13;\u0026#10;",
+                     "amount":  "-13000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Sun Stores\u0026#13;\u0026#10;",
+                                               "amount":  "-13000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales Exempt\u0026#13;\u0026#10;",
+                                               "amount":  "12000.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Packing Charges",
+                                               "amount":  "1000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000012e",
+                     "date":  "20200412",
+                     "voucherType":  "Delivery Note",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "Sun Stores\u0026#13;\u0026#10;",
+                     "amount":  "-13000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Sun Stores\u0026#13;\u0026#10;",
+                                               "amount":  "-13000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales Exempt\u0026#13;\u0026#10;",
+                                               "amount":  "12000.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Packing Charges",
+                                               "amount":  "1000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000016f",
+                     "date":  "20200412",
+                     "voucherType":  "Sales",
+                     "voucherNumber":  "9",
+                     "narration":  "",
+                     "partyName":  "Sun Stores\u0026#13;\u0026#10;",
+                     "amount":  "-13000.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Sun Stores\u0026#13;\u0026#10;",
+                                               "amount":  "-13000.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales Exempt\u0026#13;\u0026#10;",
+                                               "amount":  "12000.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Packing Charges",
+                                               "amount":  "1000.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000020b",
+                     "date":  "20200412",
+                     "voucherType":  "Journal",
+                     "voucherNumber":  "5",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "-2500.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Printing \u0026amp; Stationary\u0026#13;\u0026#10;",
+                                               "amount":  "-2500.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Bank of Baroda-Savings A/c",
+                                               "amount":  "2500.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000023e",
+                     "date":  "20200412",
+                     "voucherType":  "Debit Note",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "AVN Traders\u0026#13;\u0026#10;",
+                     "amount":  "-2420.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "AVN Traders\u0026#13;\u0026#10;",
+                                               "amount":  "-2420.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Purchase\u0026#13;\u0026#10;",
+                                               "amount":  "2420.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000083",
+                     "date":  "20200414",
+                     "voucherType":  "Purchase",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "MM Frozen Foods\u0026#13;\u0026#10;",
+                     "amount":  "$594.05 @ ? 59.9998/$ = ? 35642.88",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "MM Frozen Foods\u0026#13;\u0026#10;",
+                                               "amount":  "$594.05 @ ? 59.9998/$ = ? 35642.88",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Import Purchases\u0026#13;\u0026#10;",
+                                               "amount":  "-$530.40 @ ? 60/$ = -? 31824.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "IGST",
+                                               "amount":  "-$63.65 @ ? 59.9981/$ = -? 3818.88",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001b7",
+                     "date":  "20200414",
+                     "voucherType":  "Receipt",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "11648.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "SuperFoods\u0026#13;\u0026#10;",
+                                               "amount":  "11648.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Bank of Baroda-Savings A/c",
+                                               "amount":  "-11648.00",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000005",
+                     "date":  "20200415",
+                     "voucherType":  "Purchase Order",
+                     "voucherNumber":  "3",
+                     "narration":  "",
+                     "partyName":  "Confident Traders\u0026#13;\u0026#10;",
+                     "amount":  "15835.60",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Confident Traders\u0026#13;\u0026#10;",
+                                               "amount":  "15835.60",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Purchase\u0026#13;\u0026#10;",
+                                               "amount":  "-13420.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "CGST",
+                                               "amount":  "-1207.80",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "SGST",
+                                               "amount":  "-1207.80",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000000e",
+                     "date":  "20200415",
+                     "voucherType":  "Purchase Order",
+                     "voucherNumber":  "4",
+                     "narration":  "Ajit Nair",
+                     "partyName":  "HKN Enterprises\u0026#13;\u0026#10;",
+                     "amount":  "7140.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "HKN Enterprises\u0026#13;\u0026#10;",
+                                               "amount":  "7140.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Purchase\u0026#13;\u0026#10;",
+                                               "amount":  "-7140.00",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000000a6",
+                     "date":  "20200415",
+                     "voucherType":  "Sales Order",
+                     "voucherNumber":  "4",
+                     "narration":  "",
+                     "partyName":  "Zeta Provisions\u0026#13;\u0026#10;",
+                     "amount":  "-�209.49 @ ? 79.9982/� = -? 16758.82",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Zeta Provisions\u0026#13;\u0026#10;",
+                                               "amount":  "-�209.49 @ ? 79.9982/� = -? 16758.82",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales Export\u0026#13;\u0026#10;",
+                                               "amount":  "�149.90 @ ? 80/� = ? 11992.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Packing Charges",
+                                               "amount":  "�7.50 @ ? 79.9467/� = ? 599.60",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Transportation Charges",
+                                               "amount":  "�7.50 @ ? 79.9467/� = ? 599.60",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Insurance",
+                                               "amount":  "�2.62 @ ? 80.0992/� = ? 209.86",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "IGST",
+                                               "amount":  "�41.97 @ ? 80.0038/� = ? 3357.76",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000271",
+                     "date":  "20200415",
+                     "voucherType":  "Credit Note",
+                     "voucherNumber":  "2",
+                     "narration":  "",
+                     "partyName":  "A to Z Stationers\u0026#13;\u0026#10;",
+                     "amount":  "400.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "A to Z Stationers\u0026#13;\u0026#10;",
+                                               "amount":  "400.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales",
+                                               "amount":  "-400.00",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000000e5",
+                     "date":  "20200417",
+                     "voucherType":  "Sales Order",
+                     "voucherNumber":  "5",
+                     "narration":  "",
+                     "partyName":  "BMS Mart\u0026#13;\u0026#10;",
+                     "amount":  "-7296.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "BMS Mart\u0026#13;\u0026#10;",
+                                               "amount":  "-7296.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Sales",
+                                               "amount":  "5700.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "IGST",
+                                               "amount":  "1596.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001f4",
+                     "date":  "20200417",
+                     "voucherType":  "Journal",
+                     "voucherNumber":  "6",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "-500.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Printing \u0026amp; Stationary\u0026#13;\u0026#10;",
+                                               "amount":  "-500.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Bank of Baroda-Savings A/c",
+                                               "amount":  "500.00",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000225",
+                     "date":  "20200417",
+                     "voucherType":  "Stock Journal",
+                     "voucherNumber":  "3",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  null,
+                                               "amount":  null,
+                                               "ledgerType":  null
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000007",
+                     "date":  "20200418",
+                     "voucherType":  "Receipt Note",
+                     "voucherNumber":  "3",
+                     "narration":  "",
+                     "partyName":  "Confident Traders\u0026#13;\u0026#10;",
+                     "amount":  "15835.60",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Confident Traders\u0026#13;\u0026#10;",
+                                               "amount":  "15835.60",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Purchase\u0026#13;\u0026#10;",
+                                               "amount":  "-13420.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "CGST",
+                                               "amount":  "-1207.80",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "SGST",
+                                               "amount":  "-1207.80",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000008",
+                     "date":  "20200418",
+                     "voucherType":  "Purchase",
+                     "voucherNumber":  "3",
+                     "narration":  "",
+                     "partyName":  "Confident Traders\u0026#13;\u0026#10;",
+                     "amount":  "15835.60",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Confident Traders\u0026#13;\u0026#10;",
+                                               "amount":  "15835.60",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Purchase\u0026#13;\u0026#10;",
+                                               "amount":  "-13420.00",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "CGST",
+                                               "amount":  "-1207.80",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "SGST",
+                                               "amount":  "-1207.80",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000009",
+                     "date":  "20200418",
+                     "voucherType":  "Payment",
+                     "voucherNumber":  "1",
+                     "narration":  "",
+                     "partyName":  "",
+                     "amount":  "-15835.60",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "Confident Traders\u0026#13;\u0026#10;",
+                                               "amount":  "-15835.60",
+                                               "ledgerType":  "Yes"
+                                           },
+                                           {
+                                               "ledgerName":  "Bank of Baroda-Savings A/c",
+                                               "amount":  "15835.60",
+                                               "ledgerType":  "No"
+                                           }
+                                       ]
+                 },
+                 {
+                     "guid":  "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000005c",
+                     "date":  "20200418",
+                     "voucherType":  "Receipt Note",
+                     "voucherNumber":  "4",
+                     "narration":  "",
+                     "partyName":  "HKN Enterprises\u0026#13;\u0026#10;",
+                     "amount":  "7140.00",
+                     "ledgerEntries":  [
+                                           {
+                                               "ledgerName":  "HKN Enterprises\u0026#13;\u0026#10;",
+                                               "amount":  "7140.00",
+                                               "ledgerType":  "No"
+                                           },
+                                           {
+                                               "ledgerName":  "Purchase\u0026#13;\u0026#10;",
+                                               "amount":  "-7140.00",
+                                               "ledgerType":  "Yes"
+                                           }
+                                       ]
+                 }
+             ],
+    "meta":  {
+                 "total":  736,
+                 "page":  1,
+                 "limit":  50,
+                 "totalPages":  15,
+                 "dateRange":  {
+                                   "from":  "2024-04-01",
+                                   "to":  "2024-04-30"
+                               },
+                 "fromCache":  true
+             }
+}

@@ -6,8 +6,8 @@
  * GET /api/v1/vouchers
  *   Query: fromDate, toDate (required), voucherType, company, page, limit
  *
- * GET /api/v1/vouchers/:voucherNumber
- *   Path: voucherNumber (URL-encoded)
+ * GET /api/v1/vouchers/:voucherGuid
+ *   Path: voucherGuid (URL-encoded)
  *
  * GET /api/v1/vouchers/summary
  *   Query: fromDate, toDate, company
@@ -97,9 +97,9 @@ const voucherQuerySchema = {
 const voucherParamSchema = {
   params: {
     type: 'object',
-    required: ['voucherNumber'],
+    required: ['voucherGuid'],
     properties: {
-      voucherNumber: { type: 'string', minLength: 1, maxLength: 100 },
+      voucherGuid: { type: 'string', minLength: 1, maxLength: 100 },
     },
   },
 };
@@ -149,21 +149,21 @@ async function voucherRoutes(fastify) {
   });
 
   /**
-   * GET /api/v1/vouchers/:voucherNumber
-   * Fetch a single voucher by voucher number.
+   * GET /api/v1/vouchers/:voucherGuid
+   * Fetch a single voucher by GUID.
    *
-   * Example: GET /api/v1/vouchers/Sal-001
+   * Example: GET /api/v1/vouchers/12345678-1234-1234-1234-123456789abc
    */
-  fastify.get('/vouchers/:voucherNumber', { schema: voucherParamSchema }, async (request, reply) => {
-    const voucherNumber = decodeURIComponent(request.params.voucherNumber);
+  fastify.get('/vouchers/:voucherGuid', { schema: voucherParamSchema }, async (request, reply) => {
+    const voucherGuid = decodeURIComponent(request.params.voucherGuid);
 
-    const { voucher, fromCache } = await voucherService.getVoucherByNumber({ voucherNumber });
+    const { voucher, fromCache } = await voucherService.getVoucherByGuid({ voucherGuid });
 
     if (!voucher) {
       return reply.code(404).send({
         success: false,
         error: 'NotFound',
-        message: `Voucher "${voucherNumber}" not found`,
+        message: `Voucher with GUID "${voucherGuid}" not found`,
       });
     }
 

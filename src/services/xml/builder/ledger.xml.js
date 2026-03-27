@@ -7,9 +7,9 @@
 'use strict';
 
 /**
- * Build XML request to get list of all ledgers
+ * Build XML request to get list of all ledgers - Updated with working logic
  */
-function buildLedgerListXml({ fromDate, toDate } = {}) {
+function buildLedgerListXml({ fromDate, toDate, company = '' } = {}) {
   const formatDate = (date) => date ? date.toISOString().slice(0, 10).replace(/-/g, '') : '';
   
   return `<?xml version="1.0" encoding="utf-8"?>
@@ -24,6 +24,7 @@ function buildLedgerListXml({ fromDate, toDate } = {}) {
     <DESC>
       <STATICVARIABLES>
         <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
+        ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
         ${fromDate ? `<SVFROMDATE>${formatDate(fromDate)}</SVFROMDATE>` : ''}
         ${toDate ? `<SVTODATE>${formatDate(toDate)}</SVTODATE>` : ''}
       </STATICVARIABLES>
@@ -48,14 +49,14 @@ function buildSingleLedgerXml({ ledgerName, company = '' } = {}) {
 <ENVELOPE>
   <HEADER>
     <VERSION>1</VERSION>
-    <TALLYREQUEST>Export Data</TALLYREQUEST>
-    <TYPE>Collection</TYPE>
+    <TALLYREQUEST>EXPORT</TALLYREQUEST>
+    <TYPE>COLLECTION</TYPE>
     <ID>Ledger Details</ID>
   </HEADER>
   <BODY>
     <DESC>
       <STATICVARIABLES>
-        <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
+        <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
         ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
       </STATICVARIABLES>
       <TDL>
@@ -80,14 +81,14 @@ function buildLedgerBalanceXml({ ledgerName, company = '' } = {}) {
 <ENVELOPE>
   <HEADER>
     <VERSION>1</VERSION>
-    <TALLYREQUEST>Export Data</TALLYREQUEST>
-    <TYPE>Collection</TYPE>
+    <TALLYREQUEST>EXPORT</TALLYREQUEST>
+    <TYPE>COLLECTION</TYPE>
     <ID>Ledger Balance</ID>
   </HEADER>
   <BODY>
     <DESC>
       <STATICVARIABLES>
-        <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
+        <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
         ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
       </STATICVARIABLES>
       <TDL>
@@ -114,14 +115,14 @@ function buildLedgerTransactionsXml({ ledgerName, fromDate, toDate, company = ''
 <ENVELOPE>
   <HEADER>
     <VERSION>1</VERSION>
-    <TALLYREQUEST>Export Data</TALLYREQUEST>
-    <TYPE>Collection</TYPE>
+    <TALLYREQUEST>EXPORT</TALLYREQUEST>
+    <TYPE>COLLECTION</TYPE>
     <ID>Ledger Transactions</ID>
   </HEADER>
   <BODY>
     <DESC>
       <STATICVARIABLES>
-        <SVEXPORTFORMAT>XML</SVEXPORTFORMAT>
+        <SVEXPORTFORMAT>$$SysName:XML</SVEXPORTFORMAT>
         ${company ? `<SVCOMPANY>${company}</SVCOMPANY>` : ''}
         ${fromDate ? `<SVFROMDATE>${formatDate(fromDate)}</SVFROMDATE>` : ''}
         ${toDate ? `<SVTODATE>${formatDate(toDate)}</SVTODATE>` : ''}
@@ -141,7 +142,7 @@ function buildLedgerTransactionsXml({ ledgerName, fromDate, toDate, company = ''
 }
 
 /**
- * Build XML request to get detailed information for all ledgers
+ * Build XML request to get detailed information for all ledgers - Updated with working logic
  * Fetches complete ledger data including balances and parent groups
  */
 function buildDetailedLedgerXml({ fromDate, toDate, company = '' } = {}) {
@@ -153,7 +154,7 @@ function buildDetailedLedgerXml({ fromDate, toDate, company = '' } = {}) {
     <VERSION>1</VERSION>
     <TALLYREQUEST>EXPORT</TALLYREQUEST>
     <TYPE>COLLECTION</TYPE>
-    <ID>Collection</ID>
+    <ID>AllLedgers</ID>
   </HEADER>
   <BODY>
     <DESC>
@@ -165,9 +166,9 @@ function buildDetailedLedgerXml({ fromDate, toDate, company = '' } = {}) {
       </STATICVARIABLES>
       <TDL>
         <TDLMESSAGE>
-          <COLLECTION NAME="MyDetailedLedgers">
+          <COLLECTION NAME="AllLedgers">
             <TYPE>Ledger</TYPE>
-            <FETCH>NAME,GUID,PARENT,OPENINGBALANCE,CLOSINGBALANCE,CURRENTBALANCE,LEDGERFBANKING,PARTYNAME,PARTYMAIL,PARTYADDRESS,PARTYPHONE,PARTYGSTIN,PAN,BILLBYBILL,AFFECTSSTOCK,ISDEEMEDPOSITIVE,ISCOSTCENTREON,ISCOSTCENTRECREATEDON</FETCH>
+            <FETCH>GUID,NAME,PARENT,OPENINGBALANCE,CLOSINGBALANCE,GSTIN,BANKACCOUNTNUMBER,BANKNAME,PAN,EMAIL</FETCH>
           </COLLECTION>
         </TDLMESSAGE>
       </TDL>

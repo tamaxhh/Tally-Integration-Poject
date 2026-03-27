@@ -27,11 +27,12 @@ const { authMiddleware } = require('./middleware/auth.middleware');
 const { errorHandler } = require('./middleware/errorHandler.middleware');
 
 // Route handlers
+const healthRoutes = require('./routes/health.routes');
 const ledgerRoutes = require('./routes/ledger.routes');
 const voucherRoutes = require('./routes/voucher.routes');
 const reportRoutes = require('./routes/report.routes');
-const healthRoutes = require('./routes/health.routes');
 const completeDataRoutes = require('./routes/complete-data.routes');
+const groupsRoutes = require('./routes/groups.routes');
 
 /**
  * Build and configure the Fastify server instance.
@@ -132,6 +133,8 @@ async function buildServer() {
   await server.register(ledgerRoutes, { prefix: API_PREFIX });  // /api/v1/ledgers
   await server.register(voucherRoutes, { prefix: API_PREFIX }); // /api/v1/vouchers
   await server.register(reportRoutes, { prefix: API_PREFIX });  // /api/v1/reports
+  await server.register(groupsRoutes, { prefix: API_PREFIX });  // /api/v1/groups
+  
   await server.register(completeDataRoutes, { prefix: API_PREFIX }); // /api/v1/complete-data
 
   // Frontend API endpoints (no prefix for direct access)

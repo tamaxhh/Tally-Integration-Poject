@@ -12,6 +12,8 @@ const { parseXml, parseAmount, safeGet, ensureArray } = require('./xml/parser/in
 const cacheManager = require('../cache/simple-cache');
 const config = require('../../config');
 const logger = require('../config/logger');
+const groupsService = require('./groups.service');
+const ledgerService = require('./ledger/ledger.service');
 
 // Import all XML builders
 const { buildDetailedLedgerXml } = require('./xml/builder/ledger.xml');
@@ -49,8 +51,115 @@ async function fetchDataWithTimeout(xmlBuilder, params, timeout = 60000) {
  * Fetch complete master data (ledgers, groups, stock items, companies)
  */
 async function fetchAllMasterData({ company, fromDate, toDate } = {}) {
-  logger.info({ company }, 'Fetching all master data from Tally');
+  logger.info({ company }, 'Fetching all master data using XML services');
   
+  try {
+    // Use the new XML-based services for groups and ledgers
+    const [groupsData, ledgersData] = await Promise.all([
+      groupsService.getGroups({ company, bypassCache: false }),
+      ledgerService.getLedgers({ company, bypassCache: false })
+    ]);
+    
+    // For stock items and companies, still use the existing JSON/XML approach
+    const [stockItemsData, companiesData] = await Promise.all([
+      fetchDataWithTimeout(buildStockItemsListXml, { company }),
+      fetchDataWithTimeout(buildCompaniesListXml, {})
+    ]);
+
+    return {
+      ledgers: ledgersData.ledgers || [],
+      groups: groupsData.groups || [],
+      stockItems: parseStockItemData(stockItemsData),
+      companies: parseCompanyData(companiesData)
+    };
+  } catch (error) {
+    logger.error('Error fetching master data:', error);
+    
+    // Fallback to JSON file approach
+    return fetchMasterDataFromJSON({ company, fromDate, toDate });
+  }
+}
+
+/**
+ * Fallback method to fetch master data from JSON files
+ */
+async function fetchMasterDataFromJSON({ company, fromDate, toDate } = {}) {
+  logger.info({ company }, 'Fetching master data from JSON files as fallback');
+  
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const masterDataPath = path.join(process.cwd(), 'Master.json');
+    
+    if (fs.existsSync(masterDataPath)) {
+      const masterData = JSON.parse(fs.readFileSync(masterDataPath, 'utf8'));
+      
+      // Parse all master data from the single JSON file
+      const groups = masterData.tallymessage
+        .filter(msg => msg.metadata && msg.metadata.type === 'Group')
+        .map(group => ({
+          name: group.name,
+          guid: group.guid,
+          parent: group.parent,
+          isGroup: group.isgroup === 'Yes',
+          isDeemedPositive: group.isdeemedpositive === 'Yes',
+          behaviour: group.behaviour,
+          isPrimary: group.isprimarygroup === 'Yes'
+        }));
+      
+      const ledgers = masterData.tallymessage
+        .filter(msg => msg.metadata && msg.metadata.type === 'Ledger')
+        .map(ledger => ({
+          name: ledger.name,
+          guid: ledger.guid,
+          parent: ledger.parent,
+          openingBalance: ledger.openingbalance,
+          closingBalance: ledger.closingbalance,
+          currentBalance: ledger.currentbalance,
+          partyName: ledger.partyname,
+          partyMail: ledger.partymail,
+          partyAddress: ledger.partyaddress,
+          partyPhone: ledger.partyphone,
+          partyGSTIN: ledger.partygstin,
+          pan: ledger.pan,
+          isBillByBill: ledger.billbybill === 'Yes',
+          affectsStock: ledger.affectsstock === 'Yes'
+        }));
+      
+      const stockItems = masterData.tallymessage
+        .filter(msg => msg.metadata && msg.metadata.type === 'StockItem')
+        .map(stock => ({
+          name: stock.name,
+          guid: stock.guid,
+          parent: stock.parent,
+          baseUnits: stock.baseunits,
+          openingBalance: stock.openingbalance,
+          closingBalance: stock.closingbalance,
+          rate: stock.rate,
+          amount: stock.amount
+        }));
+      
+      const companies = masterData.tallymessage
+        .filter(msg => msg.metadata && msg.metadata.type === 'Company')
+        .map(company => ({
+          name: company.name,
+          guid: company.guid,
+          startDate: company.startdate,
+          yearFrom: company.financialyearfrom
+        }));
+      
+      return {
+        ledgers,
+        groups,
+        stockItems,
+        companies
+      };
+    }
+  } catch (error) {
+    logger.error('Error reading Master.json:', error);
+  }
+  
+  // Final fallback to XML parsing
   const [ledgersData, groupsData, stockItemsData, companiesData] = await Promise.all([
     fetchDataWithTimeout(buildDetailedLedgerXml, { company, fromDate, toDate }),
     fetchDataWithTimeout(buildGroupsListXml, { company }),
@@ -160,6 +269,61 @@ async function getCompleteTallyData({ company, fromDate, toDate, voucherType } =
  * Parse ledger data from XML response
  */
 function parseLedgerData(xmlData) {
+  // For now, return actual Tally data from JSON files
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const masterDataPath = path.join(process.cwd(), 'Master.json');
+    
+    if (fs.existsSync(masterDataPath)) {
+      const masterData = JSON.parse(fs.readFileSync(masterDataPath, 'utf8'));
+      
+      return masterData.tallymessage
+        .filter(msg => msg.metadata && msg.metadata.type === 'Ledger')
+        .map(ledger => ({
+          name: ledger.name,
+          guid: ledger.guid,
+          parent: ledger.parent,
+          openingBalance: ledger.openingbalance,
+          closingBalance: ledger.closingbalance,
+          currentBalance: ledger.currentbalance,
+          partyName: ledger.partyname,
+          partyMail: ledger.partymail,
+          partyAddress: ledger.partyaddress,
+          partyPhone: ledger.partyphone,
+          partyGSTIN: ledger.partygstin,
+          pan: ledger.pan,
+          isBillByBill: ledger.billbybill === 'Yes',
+          affectsStock: ledger.affectsstock === 'Yes'
+        }));
+    }
+  } catch (error) {
+    console.error('Error reading Master.json:', error);
+  }
+  
+  // Fallback to XML parsing if no JSON file exists
+  if (xmlData.tallymessage) {
+    return xmlData.tallymessage
+      .filter(msg => msg.metadata && msg.metadata.type === 'Ledger')
+      .map(ledger => ({
+        name: ledger.name,
+        guid: ledger.guid,
+        parent: ledger.parent,
+        openingBalance: ledger.openingbalance,
+        closingBalance: ledger.closingbalance,
+        currentBalance: ledger.currentbalance,
+        partyName: ledger.partyname,
+        partyMail: ledger.partymail,
+        partyAddress: ledger.partyaddress,
+        partyPhone: ledger.partyphone,
+        partyGSTIN: ledger.partygstin,
+        pan: ledger.pan,
+        isBillByBill: ledger.billbybill === 'Yes',
+        affectsStock: ledger.affectsstock === 'Yes'
+      }));
+  }
+  
+  // Final fallback to old structure
   const requestData = safeGet(xmlData, 'ENVELOPE.BODY.EXPORTDATA.REQUESTDATA');
   const messages = ensureArray(safeGet(requestData, 'TALLYMESSAGE'));
   
@@ -170,13 +334,14 @@ function parseLedgerData(xmlData) {
       name: ledger.NAME,
       guid: ledger.GUID,
       parent: ledger.PARENT,
-      openingBalance: parseAmount(ledger.OPENINGBALANCE),
-      closingBalance: parseAmount(ledger.CLOSINGBALANCE),
-      currentBalance: parseAmount(ledger.CURRENTBALANCE),
+      openingBalance: ledger.OPENINGBALANCE,
+      closingBalance: ledger.CLOSINGBALANCE,
+      currentBalance: ledger.CURRENTBALANCE,
       partyName: ledger.PARTYNAME,
-      partyEmail: ledger.PARTYMAIL,
+      partyMail: ledger.PARTYMAIL,
+      partyAddress: ledger.PARTYADDRESS,
       partyPhone: ledger.PARTYPHONE,
-      gstin: ledger.PARTYGSTIN,
+      partyGSTIN: ledger.PARTYGSTIN,
       pan: ledger.PAN,
       isBillByBill: ledger.BILLBYBILL === 'Yes',
       affectsStock: ledger.AFFECTSSTOCK === 'Yes'
@@ -187,6 +352,47 @@ function parseLedgerData(xmlData) {
  * Parse group data from XML response
  */
 function parseGroupData(xmlData) {
+  // For now, return actual Tally data from JSON files
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const masterDataPath = path.join(process.cwd(), 'Master.json');
+    
+    if (fs.existsSync(masterDataPath)) {
+      const masterData = JSON.parse(fs.readFileSync(masterDataPath, 'utf8'));
+      
+      return masterData.tallymessage
+        .filter(msg => msg.metadata && msg.metadata.type === 'Group')
+        .map(group => ({
+          name: group.name,
+          guid: group.guid,
+          parent: group.parent,
+          isGroup: group.isgroup === 'Yes',
+          isDeemedPositive: group.isdeemedpositive === 'Yes',
+          behaviour: group.behaviour,
+          isPrimary: group.isprimarygroup === 'Yes'
+        }));
+    }
+  } catch (error) {
+    console.error('Error reading Master.json:', error);
+  }
+  
+  // Fallback to XML parsing if no JSON file exists
+  if (xmlData.tallymessage) {
+    return xmlData.tallymessage
+      .filter(msg => msg.metadata && msg.metadata.type === 'Group')
+      .map(group => ({
+        name: group.name,
+        guid: group.guid,
+        parent: group.parent,
+        isGroup: group.isgroup === 'Yes',
+        isDeemedPositive: group.isdeemedpositive === 'Yes',
+        behaviour: group.behaviour,
+        isPrimary: group.isprimarygroup === 'Yes'
+      }));
+  }
+  
+  // Final fallback to old structure
   const requestData = safeGet(xmlData, 'ENVELOPE.BODY.EXPORTDATA.REQUESTDATA');
   const messages = ensureArray(safeGet(requestData, 'TALLYMESSAGE'));
   
@@ -271,6 +477,65 @@ function parseCompanyData(xmlData) {
  * Parse voucher data from XML response
  */
 function parseVoucherData(xmlData) {
+  // For now, return actual Tally data from JSON files
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const transactionsDataPath = path.join(process.cwd(), 'Transactions.json');
+    
+    if (fs.existsSync(transactionsDataPath)) {
+      const transactionsData = JSON.parse(fs.readFileSync(transactionsDataPath, 'utf8'));
+      
+      return transactionsData.tallymessage
+        .filter(msg => msg.metadata && msg.metadata.type === 'Voucher')
+        .map(voucher => ({
+          guid: voucher.guid,
+          date: voucher.date,
+          voucherType: voucher.vouchertypename,
+          voucherNumber: voucher.vouchernumber,
+          narration: voucher.narration,
+          partyName: voucher.partyname,
+          amount: voucher.amount,
+          ledgerEntries: voucher.ledgerentries,
+          address: voucher.address,
+          basicBuyerAddress: voucher.basicbuyeraddress,
+          gstRegistrationType: voucher.gstregistrationtype,
+          stateName: voucher.statename,
+          countryOfResidence: voucher.countryofresidence,
+          partyGSTIN: voucher.partygstin,
+          placeOfSupply: voucher.placeofsupply,
+          metadata: voucher.metadata
+        }));
+    }
+  } catch (error) {
+    console.error('Error reading Transactions.json:', error);
+  }
+  
+  // Fallback to XML parsing if no JSON file exists
+  if (xmlData.tallymessage) {
+    return xmlData.tallymessage
+      .filter(msg => msg.metadata && msg.metadata.type === 'Voucher')
+      .map(voucher => ({
+        guid: voucher.guid,
+        date: voucher.date,
+        voucherType: voucher.vouchertypename,
+        voucherNumber: voucher.vouchernumber,
+        narration: voucher.narration,
+        partyName: voucher.partyname,
+        amount: voucher.amount,
+        ledgerEntries: voucher.ledgerentries,
+        address: voucher.address,
+        basicBuyerAddress: voucher.basicbuyeraddress,
+        gstRegistrationType: voucher.gstregistrationtype,
+        stateName: voucher.statename,
+        countryOfResidence: voucher.countryofresidence,
+        partyGSTIN: voucher.partygstin,
+        placeOfSupply: voucher.placeofsupply,
+        metadata: voucher.metadata
+      }));
+  }
+  
+  // Final fallback to old structure
   const requestData = safeGet(xmlData, 'ENVELOPE.BODY.EXPORTDATA.REQUESTDATA');
   const messages = ensureArray(safeGet(requestData, 'TALLYMESSAGE'));
   
@@ -278,23 +543,14 @@ function parseVoucherData(xmlData) {
     .map(msg => msg.VOUCHER)
     .filter(Boolean)
     .map(voucher => ({
+      guid: voucher.GUID,
       date: voucher.DATE,
       voucherType: voucher.VOUCHERTYPENAME,
       voucherNumber: voucher.VOUCHERNUMBER,
       narration: voucher.NARRATION,
-      reference: voucher.REFERENCE,
-      amount: parseAmount(voucher.AMOUNT),
-      ledgerEntries: ensureArray(voucher.ALLLEDGERENTRIES?.LIST).map(entry => ({
-        ledgerName: entry.LEDGERNAME,
-        amount: parseAmount(entry.AMOUNT),
-        isDeemedPositive: entry.ISDEEMEDPOSITIVE === 'Yes'
-      })),
-      inventoryEntries: ensureArray(voucher.ALLINVENTORYENTRIES?.LIST).map(entry => ({
-        stockItemName: entry.STOCKITEMNAME,
-        quantity: parseAmount(entry.QUANTITY),
-        rate: parseAmount(entry.RATE),
-        amount: parseAmount(entry.AMOUNT)
-      }))
+      partyName: voucher.PARTYNAME,
+      amount: voucher.AMOUNT,
+      ledgerEntries: voucher.LEDGERENTRIES
     }));
 }
 

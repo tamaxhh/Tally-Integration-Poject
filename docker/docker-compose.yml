@@ -35,6 +35,11 @@ services:
       - REDIS_URL=redis://redis:6379
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/tally_integration?ssl=false&sslmode=disable
       - LOG_LEVEL=info
+    volumes:
+      - ../Master.json:/app/Master.json
+      - ../Transactions.json:/app/Transactions.json
+      - ../src/services:/app/services
+      - ../src/routes:/app/routes
     depends_on:
       redis:
         condition: service_healthy

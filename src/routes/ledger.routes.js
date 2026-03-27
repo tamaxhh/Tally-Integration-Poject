@@ -6,9 +6,7 @@
 
 'use strict';
 
-const { sendToTally } = require('../services/connectors/tally.client.js');
-const { buildLedgerListXml } = require('../services/xml/builder/ledger.xml');
-const { parseLedgerList } = require('../services/xml/parser/ledger.parser');
+const ledgerService = require('../services/ledger/ledger.service.js');
 
 /**
  * Register ledger routes with Fastify instance
@@ -34,26 +32,17 @@ async function ledgerRoutes(fastify, options) {
       const { company, bypassCache } = request.query;
       console.log('📥 Request params:', { company, bypassCache });
       
-      // Return working test data directly - bypass all Tally calls
-      console.log('� RETURNING WORKING TEST DATA');
+      // Use the enhanced ledger service
+      const result = await ledgerService.getLedgers({ company, bypassCache });
+      
       return {
         success: true,
-        data: [
-          { name: "Alfa Provisions" },
-          { name: "Anup and Co" },
-          { name: "A to Z Stationers" },
-          { name: "AVN Traders" },
-          { name: "Bank Charges" },
-          { name: "Sales Export" },
-          { name: "Sales Nil Rated" },
-          { name: "Sales North" },
-          { name: "Sales Return" },
-          { name: "Sales South" },
-          { name: "Sales West" }
-        ],
+        data: result.ledgers,
         meta: {
-          total: 10,
-          fromCache: false,
+          total: result.total,
+          fromCache: result.fromCache,
+          summary: result.summary,
+          metadata: result.metadata,
           timestamp: new Date().toISOString()
         }
       };
@@ -244,6 +233,87 @@ async function ledgerRoutes(fastify, options) {
       return {
         success: false,
         error: 'Failed to invalidate cache',
+        message: error.message
+      };
+    }
+  });
+
+  // Export ledger data to JSON file
+  fastify.post('/ledgers/export', {
+    schema: {
+      body: {
+        type: 'object',
+        properties: {
+          company: { type: 'string' },
+          outputDir: { type: 'string' },
+          bypassCache: { type: 'boolean' }
+        }
+      }
+    }
+  }, async (request, reply) => {
+    try {
+      const { company, outputDir, bypassCache } = request.body;
+      const result = await ledgerService.exportLedgerData({ company, outputDir, bypassCache });
+      
+      return {
+        success: true,
+        data: result,
+        meta: {
+          timestamp: new Date().toISOString()
+        }
+      };
+    } catch (error) {
+      fastify.log.error(error);
+      reply.code(500);
+      return {
+        success: false,
+        error: 'Failed to export ledger data',
+        message: error.message
+      };
+    }
+  });
+
+  // Get top ledgers by balance
+  fastify.get('/ledgers/top-by-balance', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          company: { type: 'string' },
+          limit: { type: 'number', default: 10 },
+          sortBy: { type: 'string', enum: ['absolute', 'value'], default: 'absolute' },
+          bypassCache: { type: 'boolean' }
+        }
+      }
+    }
+  }, async (request, reply) => {
+    try {
+      const { company, limit, sortBy, bypassCache } = request.query;
+      const result = await ledgerService.getTopLedgersByBalance({ 
+        company, 
+        limit: parseInt(limit) || 10, 
+        sortBy, 
+        bypassCache 
+      });
+      
+      return {
+        success: true,
+        data: result.topLedgers,
+        meta: {
+          total: result.total,
+          company: result.company,
+          sortBy: result.sortBy,
+          limit: result.limit,
+          summary: result.summary,
+          timestamp: new Date().toISOString()
+        }
+      };
+    } catch (error) {
+      fastify.log.error(error);
+      reply.code(500);
+      return {
+        success: false,
+        error: 'Failed to fetch top ledgers by balance',
         message: error.message
       };
     }
