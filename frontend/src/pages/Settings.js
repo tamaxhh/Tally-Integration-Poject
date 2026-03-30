@@ -48,13 +48,17 @@ const Settings = () => {
     setConnectionTestErrors({});
     
     try {
+      // Extract only the tallyUrl to avoid circular references from react-hook-form
+      const cleanData = { tallyUrl: data.tallyUrl || watchedConnectionData.tallyUrl };
+      
       // Test the connection with the provided data
-      const response = await fetch('/api/test-connection', {
+      const response = await fetch('/api/v1/test-connection', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'X-API-Key': 'dev-key-local-only'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(cleanData)
       });
       
       const result = await response.json();

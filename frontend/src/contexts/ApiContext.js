@@ -67,7 +67,7 @@ export const ApiProvider = ({ children }) => {
           timeout: 10000,
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': 'dev-key-local-only'
+            'X-API-Key': 'dev-key-local-only'
           },
           withCredentials: false
         });
