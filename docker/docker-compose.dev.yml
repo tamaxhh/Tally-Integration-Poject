@@ -1,0 +1,92 @@
+version: '3.8'
+
+services:
+  # Backend API Service (Development)
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: tally-backend-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - HOST=0.0.0.0
+      - TALLY_HOST=host.docker.internal
+      - TALLY_PORT=9000
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/tally_integration
+      - API_KEYS=dev-key-1234,prod-key-5678
+      - LOG_LEVEL=debug
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - tally-network
+    volumes:
+      - ../src:/app/src
+      - ../config.js:/app/config.js
+      - ../package.json:/app/package.json
+    command: npm run dev
+
+  # Frontend Service (Development with hot reload)
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend.dev
+    container_name: tally-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3000
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - backend
+    networks:
+      - tally-network
+    volumes:
+      - ../frontend/src:/app/src
+      - ../frontend/public:/app/public
+      - ../frontend/package.json:/app/package.json
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: tally-postgres-dev
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=tally_integration
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - tally-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: tally-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - tally-network
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+
+networks:
+  tally-network:
+    driver: bridge
