@@ -7,6 +7,7 @@
 'use strict';
 
 const { getCompleteTallyData, fetchAllMasterData, fetchAllTransactionData, fetchAllFinancialReports } = require('../services/complete-data.service');
+const { companySchema, dateSchema, voucherTypeSchema, paginationSchema } = require('../validators');
 
 /**
  * GET /api/v1/complete-data
@@ -446,16 +447,90 @@ async function getBankBookRoute(request, reply) {
 // Register all routes
 async function completeDataRoutes(fastify, options) {
   // Complete data export
-  fastify.get('/complete-data', getCompleteDataRoute);
+  fastify.get('/complete-data', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          company: companySchema,
+          fromDate: dateSchema,
+          toDate: dateSchema,
+          voucherType: voucherTypeSchema
+        },
+        additionalProperties: false
+      }
+    }
+  }, getCompleteDataRoute);
   
   // Detailed master data
-  fastify.get('/ledgers/detailed', getDetailedLedgersRoute);
-  fastify.get('/vouchers/detailed', getDetailedVouchersRoute);
-  fastify.get('/stock-items', getStockItemsRoute);
-  fastify.get('/companies', getCompaniesRoute);
+  fastify.get('/ledgers/detailed', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          company: companySchema,
+          ...paginationSchema.properties
+        },
+        additionalProperties: false
+      }
+    }
+  }, getDetailedLedgersRoute);
+  
+  fastify.get('/vouchers/detailed', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          company: companySchema,
+          fromDate: dateSchema,
+          toDate: dateSchema,
+          voucherType: voucherTypeSchema,
+          ...paginationSchema.properties
+        },
+        required: ['fromDate', 'toDate'],
+        additionalProperties: false
+      }
+    }
+  }, getDetailedVouchersRoute);
+  
+  fastify.get('/stock-items', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          company: companySchema,
+          ...paginationSchema.properties
+        },
+        additionalProperties: false
+      }
+    }
+  }, getStockItemsRoute);
+  
+  fastify.get('/companies', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {},
+        additionalProperties: false
+      }
+    }
+  }, getCompaniesRoute);
   
   // All financial reports
-  fastify.get('/reports/all', getAllReportsRoute);
+  fastify.get('/reports/all', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          company: companySchema,
+          fromDate: dateSchema,
+          toDate: dateSchema
+        },
+        required: ['fromDate', 'toDate'],
+        additionalProperties: false
+      }
+    }
+  }, getAllReportsRoute);
 }
 
 module.exports = completeDataRoutes;

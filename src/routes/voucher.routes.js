@@ -94,6 +94,30 @@ const voucherQuerySchema = {
   },
 };
 
+// Add custom validator for date range
+const voucherQuerySchemaWithValidation = {
+  querystring: {
+    ...voucherQuerySchema.querystring,
+    // Custom validation for date range
+    customValidator: function(value) {
+      if (value.fromDate && value.toDate) {
+        const from = new Date(value.fromDate);
+        const to = new Date(value.toDate);
+        const diffDays = (to - from) / (1000 * 60 * 60 * 24);
+        
+        if (diffDays > 366) {
+          return new Error('Date range cannot exceed 366 days');
+        }
+        
+        if (from > to) {
+          return new Error('fromDate must be before or equal to toDate');
+        }
+      }
+      return true;
+    }
+  }
+};
+
 const voucherParamSchema = {
   params: {
     type: 'object',
@@ -116,11 +140,53 @@ async function voucherRoutes(fastify) {
    *
    * Example: GET /api/v1/vouchers?fromDate=2024-04-01&toDate=2024-04-30&voucherType=Sales
    */
-  fastify.get('/vouchers', { schema: voucherQuerySchema }, async (request, reply) => {
+  fastify.get('/vouchers', { 
+  schema: voucherQuerySchema,
+  preHandler: async (request, reply) => {
+    const { fromDate, toDate } = request.query;
+    
+    // Additional validation for date range logic
+    if (fromDate && toDate) {
+      const from = new Date(fromDate);
+      const to = new Date(toDate);
+      
+      if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+        reply.code(400).send({
+          error: 'ValidationError',
+          message: 'Invalid date format',
+          details: { fromDate, toDate }
+        });
+        return; // Important: return to stop execution
+      }
+      
+      if (from > to) {
+        reply.code(400).send({
+          error: 'ValidationError',
+          message: 'fromDate must be before or equal to toDate',
+          details: { fromDate, toDate }
+        });
+        return; // Important: return to stop execution
+      }
+      
+      const diffDays = (to - from) / (1000 * 60 * 60 * 24);
+      console.log(`🔍 DEBUG: Date range validation - from: ${from}, to: ${to}, diffDays: ${diffDays}`);
+      if (diffDays > 366) {
+        console.log(`🔍 DEBUG: Date range too large - ${diffDays} > 366`);
+        reply.code(400).send({
+          error: 'ValidationError',
+          message: 'Date range cannot exceed 366 days',
+          details: { maxDays: 366, providedDays: Math.ceil(diffDays) }
+        });
+        return; // Important: return to stop execution
+      }
+    }
+  }
+}, async (request, reply) => {
     const { fromDate, toDate, voucherType, company = '', page = 1, limit = 50 } = request.query;
 
-    // Validate date range (schema validates format, this validates logic)
-    const { from, to } = validateDateRange(fromDate, toDate);
+    // The preHandler already validated the date range, so we can safely parse it
+    const from = new Date(fromDate);
+    const to = new Date(toDate);
 
     const { vouchers, total, fromCache } = await voucherService.getVouchers({
       fromDate: from,

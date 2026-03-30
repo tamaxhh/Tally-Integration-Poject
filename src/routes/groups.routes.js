@@ -7,6 +7,7 @@
 'use strict';
 
 const groupsService = require('../services/groups.service');
+const { companySchema, commonQuerySchema } = require('../validators');
 
 /**
  * Groups routes plugin for Fastify
@@ -16,7 +17,27 @@ const groupsService = require('../services/groups.service');
 async function groupsRoutes(server, options) {
   
   // GET /api/v1/groups - Get all groups with search/filter options
-  server.get('/groups', async (request, reply) => {
+  server.get('/groups', {
+    schema: {
+      querystring: {
+        type: 'object',
+        properties: {
+          company: companySchema,
+          parent: {
+            type: 'string',
+            maxLength: 255
+          },
+          search: {
+            type: 'string',
+            minLength: 1,
+            maxLength: 255
+          },
+          bypassCache: { type: 'boolean', default: false }
+        },
+        additionalProperties: false
+      }
+    }
+  }, async (request, reply) => {
     try {
       const { company, parent, search, bypassCache } = request.query;
       
@@ -66,7 +87,11 @@ async function groupsRoutes(server, options) {
   });
 
   // GET /api/v1/groups/hierarchy - Get groups hierarchy
-  server.get('/groups/hierarchy', async (request, reply) => {
+  server.get('/groups/hierarchy', {
+    schema: {
+      querystring: commonQuerySchema
+    }
+  }, async (request, reply) => {
     try {
       const { company, bypassCache } = request.query;
       
@@ -103,7 +128,23 @@ async function groupsRoutes(server, options) {
   });
 
   // GET /api/v1/groups/:groupName - Get single group
-  server.get('/groups/:groupName', async (request, reply) => {
+  server.get('/groups/:groupName', {
+    schema: {
+      params: {
+        type: 'object',
+        properties: {
+          groupName: {
+            type: 'string',
+            minLength: 1,
+            maxLength: 255,
+            pattern: '^[\\w\\s\\-&()]+$'
+          }
+        },
+        required: ['groupName']
+      },
+      querystring: commonQuerySchema
+    }
+  }, async (request, reply) => {
     try {
       const { groupName } = request.params;
       const { company, bypassCache } = request.query;

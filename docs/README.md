@@ -1,255 +1,294 @@
-# Tally Integration API
+# 🚀 Tally Integration API
 
-Production-grade integration system that connects to Tally ERP/Prime via its XML API,
-transforms the data into clean JSON, and exposes it through a REST API.
+Production-grade integration system that connects Tally Prime to modern web applications through a secure REST API.
 
-## Architecture at a Glance
+## 🎯 What This Project Does
+
+Transforms Tally's desktop-only data into accessible web APIs with:
+- **Real-time Data Access**: Live connection to Tally accounting data
+- **Modern Web Interface**: React frontend with responsive UI
+- **Production Features**: Authentication, caching, rate limiting, error handling
+- **Multiple Deployment Options**: Local development, standalone executable, Docker
+
+## 🏗️ Architecture Overview
 
 ```
-Client → Fastify API → Auth/Rate Limit → Service Layer
-                                              ↓
-                                    Redis Cache (TTL-based)
-                                              ↓
-                                    XML Builder → Tally :9000
-                                              ↓
-                                    XML Parser → PostgreSQL
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   React UI      │───▶│   Fastify API   │───▶│   Tally Prime   │
+│  (Frontend)     │    │   (Backend)     │    │  (Desktop)     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                              │
+                              ▼
+                       ┌─────────────────┐
+                       │   Redis Cache   │
+                       │   (Performance) │
+                       └─────────────────┘
 ```
 
-## Prerequisites
+## 📋 Prerequisites
 
 | Requirement | Details |
-|---|---|
-| Node.js | v20+ (LTS) |
-| Tally ERP/Prime | Must have "Enable ODBC Server" turned on |
-| Redis | v7+ (for caching) |
-| PostgreSQL | v15+ (for snapshots, optional) |
-| OS | Any — but Tally only runs on Windows, so you'll need Windows or a Windows VM |
+|-------------|---------|
+| **Node.js** | v20+ (LTS) |
+| **Tally Prime** | Installed with XML port enabled |
+| **Redis** | v7+ (for caching - optional) |
+| **OS** | Windows (Tally requirement) |
 
-### Enabling Tally's ODBC Server
-
-1. Open Tally
-2. Go to **F12: Configure → Advanced Configuration**
-3. Set **"Enable ODBC Server"** to **Yes**
+### Enable Tally XML Access
+1. Open Tally Prime
+2. Press **F12 → Configure → Advanced Configuration**
+3. Set **"Allow XML Import/Export"** to **Yes**
 4. Note the port (default: **9000**)
-5. Open your company in Tally (Tally serves data for whichever company is open)
+5. Restart Tally
 
-## Quick Start
+## 🚀 Quick Start
 
-### Option A: Local development
-
+### Option 1: Local Development
 ```bash
-# 1. Clone and install
-git clone <repo> && cd tally-integration
+# Navigate to project
+cd c:\Users\tamash62\Downloads\Tally
+
+# Install dependencies
 npm install
 
-# 2. Configure
-cp .env.example .env
-# Edit .env — at minimum set TALLY_HOST if Tally is on a different machine
+# Configure environment
+copy .env.example .env
+# Edit .env with your settings
 
-# 3. Start Redis (if not already running)
-docker run -d -p 6379:6379 redis:7-alpine
+# Start development server
+npm run dev
 
-# 4. Start the API
-npm run dev   # nodemon watches for changes
-
-# 5. Verify
-curl http://localhost:3000/health
+# Access the application
+# Frontend: http://localhost:3000
+# API: http://localhost:3000/api/v1/ledgers
 ```
 
-### Option B: Docker Compose (recommended)
-
+### Option 2: Standalone Executable
 ```bash
-cp .env.example .env
-# Edit TALLY_HOST in docker-compose.yml if Tally is on a different machine
+# Build executable
+npm run build:exe
 
+# Run the generated file
+.\dist\tally-remote-fetcher.exe
+
+# Access at http://localhost:3000
+```
+
+### Option 3: Docker
+```bash
+# Start with Docker Compose
 docker-compose -f docker/docker-compose.yml up -d
 
 # View logs
-docker-compose -f docker/docker-compose.yml logs -f app
+docker-compose -f docker/docker-compose.yml logs -f
 ```
 
-## Configuration
+## 🔧 Configuration
 
-All configuration is via environment variables. See `.env.example` for full list.
+Key environment variables (see `.env.example`):
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `TALLY_HOST` | No | `localhost` | Hostname where Tally is running |
-| `TALLY_PORT` | No | `9000` | Tally ODBC server port |
-| `TALLY_TIMEOUT_MS` | No | `5000` | Request timeout in milliseconds |
-| `API_KEYS` | Yes | — | Comma-separated list of valid API keys |
-| `REDIS_URL` | No | `redis://localhost:6379` | Redis connection URL |
-| `LOG_LEVEL` | No | `info` | `debug/info/warn/error` |
+```env
+# Server
+NODE_ENV=development
+PORT=3000
+HOST=0.0.0.0
 
-## API Reference
+# Tally Connection
+TALLY_HOST=localhost
+TALLY_PORT=9000
+TALLY_TIMEOUT_MS=5000
 
-All endpoints require the `X-API-Key` header (except `/health*`).
+# Security
+API_KEYS=dev-key-local-only,admin-key-1234
 
-### Ledgers
+# Logging
+LOG_LEVEL=info
+```
 
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/v1/ledgers` | List all ledgers |
-| GET | `/api/v1/ledgers/:name` | Get ledger by name (URL-encode the name) |
-| POST | `/api/v1/ledgers/sync` | Force refresh from Tally |
+## 📚 API Endpoints
 
-Query params for GET `/api/v1/ledgers`:
-- `company` — Filter by Tally company name
-- `page` — Page number (default: 1)
-- `limit` — Results per page (default: 50, max: 500)
+All endpoints require API key authentication (except `/health`).
 
-### Vouchers
+### Core Endpoints
+```bash
+# Health Check
+GET /health
 
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/v1/vouchers` | List vouchers by date range |
-| GET | `/api/v1/vouchers/:voucherNumber` | Get single voucher |
-| GET | `/api/v1/vouchers/summary` | Totals grouped by voucher type |
+# List all ledgers
+GET /api/v1/ledgers?apiKey=your-key
 
-Required query params: `fromDate` (YYYY-MM-DD), `toDate` (YYYY-MM-DD)
-Optional: `voucherType` (Sales, Payment, Receipt, etc.), `company`, `page`, `limit`
+# Get specific ledger
+GET /api/v1/ledgers/{ledgerName}?apiKey=your-key
 
-Maximum date range: 366 days.
+# Get ledger transactions
+GET /api/v1/ledgers/{ledgerName}/transactions?from=2024-01-01&to=2024-12-31&apiKey=your-key
 
-### Reports
+# List vouchers
+GET /api/v1/vouchers?from=2024-01-01&to=2024-12-31&apiKey=your-key
 
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/v1/reports/trial-balance` | All ledger closing balances |
-| GET | `/api/v1/reports/profit-loss` | Income vs expenses |
-| GET | `/api/v1/reports/balance-sheet` | Assets and liabilities |
-| GET | `/api/v1/reports/day-book` | All transactions for a date range |
+# Get reports
+GET /api/v1/reports/trial-balance?apiKey=your-key
+GET /api/v1/reports/profit-loss?apiKey=your-key
+```
 
-Required query params: `fromDate`, `toDate`
+### Special Endpoints
+```bash
+# Test Tally connection
+POST /api/test-connection
+Body: { "tallyUrl": "localhost:9000" }
 
-### Health
+# Fetch specific data
+POST /api/fetch-tally-data
+Body: { 
+  "tallyUrl": "localhost:9000",
+  "requestType": "ListOfLedgers",
+  "ledgerName": "Cash",
+  "from": "2024-01-01",
+  "to": "2024-12-31"
+}
+```
 
-| Method | Endpoint | Auth | Description |
-|---|---|---|---|
-| GET | `/health` | No | Full status (Tally + Redis) |
-| GET | `/health/live` | No | Liveness probe (always 200) |
-| GET | `/health/ready` | No | Readiness probe (503 if Tally down) |
+## 🎨 Frontend Features
 
-## Testing
+The React frontend provides:
+- **Dashboard**: Overview of financial data
+- **Ledger Management**: View and search ledgers
+- **Transaction History**: Browse transactions by date range
+- **Reports**: Trial balance, P&L, balance sheet
+- **Real-time Updates**: Live data from Tally
+- **Responsive Design**: Works on desktop and mobile
 
+## 🐳 Docker Deployment
+
+### Development
+```bash
+docker-compose -f docker/docker-compose.yml up
+```
+
+### Production
+```bash
+# Set production environment
+NODE_ENV=production
+
+# Use production compose file
+docker-compose -f docker/docker-compose.prod.yml up -d
+```
+
+## 🔒 Security Features
+
+- **API Key Authentication**: Secure access control
+- **Rate Limiting**: 100 requests per minute per IP
+- **CORS Protection**: Configurable origin access
+- **Input Validation**: Request sanitization
+- **Error Handling**: Secure error responses
+
+## 📊 Monitoring & Logging
+
+- **Structured Logging**: JSON format with Pino
+- **Health Checks**: `/health` endpoint for monitoring
+- **Performance Metrics**: Response time tracking
+- **Error Tracking**: Comprehensive error logging
+
+## 🛠️ Development
+
+### Running Tests
 ```bash
 # Run all tests
 npm test
 
-# Run unit tests only (fast, no network)
+# Unit tests only
 npm run test:unit
 
-# Run integration tests (starts mock Tally server internally)
+# Integration tests
 npm run test:integration
-
-# Run with coverage
-npx jest --coverage
 ```
 
-## Understanding the Response Format
-
-Every API response has this shape:
-
-```json
-{
-  "success": true,
-  "data": [ ... ],
-  "meta": {
-    "total": 42,
-    "page": 1,
-    "limit": 50,
-    "fromCache": true
-  }
-}
-```
-
-Error responses:
-```json
-{
-  "error": "TallyOfflineError",
-  "message": "Tally is not reachable at localhost:9000...",
-  "details": { "host": "localhost", "port": 9000 }
-}
-```
-
-HTTP status codes used:
-- `200` — Success
-- `400` — Validation error (bad query params)
-- `401` — Missing API key
-- `403` — Invalid API key
-- `404` — Resource not found in Tally
-- `429` — Rate limit exceeded
-- `500` — Unexpected server error
-- `502` — Tally returned an error or malformed XML
-- `503` — Tally is offline / circuit breaker open
-- `504` — Tally request timed out
-
-## Production Deployment
-
-### Environment hardening checklist
-
-- [ ] Set `NODE_ENV=production`
-- [ ] Set strong, unique values for `API_KEYS` (use a secret manager)
-- [ ] Set `TALLY_HOST` to the actual Tally machine IP (not localhost)
-- [ ] Configure `REDIS_URL` to production Redis (consider Redis Cluster for HA)
-- [ ] Configure `DATABASE_URL` to production PostgreSQL
-- [ ] Set `LOG_LEVEL=warn` (not `debug` — too verbose in production)
-- [ ] Set `CORS_ORIGIN` to your frontend domain(s)
-- [ ] Enable TLS termination at the load balancer (do NOT expose HTTP directly)
-
-### Cloud deployment options
-
-**AWS EC2 (simplest)**:
-- Run the Docker container on an EC2 instance
-- Tally must run on a Windows EC2 in the same VPC
-- Use ElastiCache (Redis) and RDS (PostgreSQL) for managed services
-
-**AWS ECS / Fargate (recommended)**:
-- Containerised, auto-scaling
-- Use ECS service discovery so API containers can reach Tally's EC2 by hostname
-
-**Important**: Tally runs only on Windows. Your API server can run on Linux,
-but it must have network access to the Windows machine running Tally.
-
-## Troubleshooting
-
-**"Tally is not reachable"**
-1. Is Tally running? Is a company open?
-2. Is ODBC Server enabled in Tally F12 settings?
-3. Is port 9000 open in Windows Firewall?
-4. Test directly: `curl http://<tally-ip>:9000/` — should return XML
-
-**"Circuit breaker is OPEN"**
-- Tally failed too many times recently
-- Wait 30 seconds (recovery timeout) and try again
-- Check Tally is running and responsive
-
-**Empty ledger list**
-- Make sure a company is OPEN in Tally (not just Tally running — a company must be loaded)
-- Check `TALLY_COMPANY_NAME` in .env matches exactly
-
-**Amounts showing as null**
-- The ledger has no transactions — opening and closing balance are both empty/zero in Tally
-- This is correct behavior — null means "no data" vs 0 meaning "zero balance"
-
-## Project Structure
-
+### Project Structure
 ```
 src/
-├── config/          # Config loading, logger
-├── connectors/      # Tally HTTP client, circuit breaker
-├── xml/
-│   ├── builder/     # XML request templates
-│   └── parser/      # XML → JSON transformers
-├── services/        # Business logic, caching orchestration
-├── api/
-│   ├── middleware/  # Auth, error handling
-│   └── routes/      # HTTP endpoints
-├── cache/           # Redis client and manager
-├── jobs/            # Background sync scheduler
-└── utils/           # Custom errors, helpers
+├── app.js                 # Main Fastify application
+├── index.js               # Application entry point
+├── config/                # Configuration and logging
+├── middleware/            # Auth and error handling
+├── routes/                # API route handlers
+├── services/              # Business logic
+├── parsers/               # XML parsing logic
+└── utils/                 # Helper functions
+
+frontend/
+├── src/
+│   ├── components/        # React components
+│   ├── contexts/          # React contexts
+│   ├── pages/             # Page components
+│   └── App.js             # Main React app
+└── package.json           # Frontend dependencies
+
+docker/
+├── Dockerfile             # Application container
+├── Dockerfile.frontend    # Frontend container
+└── docker-compose.yml     # Multi-container setup
 ```
 
-## License
+## 🚨 Troubleshooting
 
-MIT
+### Common Issues
+
+**"Tally is not reachable"**
+1. Verify Tally is running with a company open
+2. Check XML port is enabled (F12 → Configure)
+3. Test connection: `curl http://localhost:9000`
+4. Check Windows Firewall for port 9000
+
+**"Invalid API key"**
+1. Check API key in `.env` file
+2. Ensure key is passed in query parameter or header
+3. Verify no typos in the key
+
+**"No data found"**
+1. Ensure company is open in Tally
+2. Check date range in queries
+3. Verify ledger names exist in Tally
+4. Clear cache if needed
+
+### Debug Information
+
+When reporting issues, include:
+- Error messages (full text)
+- Tally version and company name
+- Network configuration
+- Browser console errors (F12)
+- Server logs
+
+## 📦 Build & Distribution
+
+### Create Standalone Executable
+```bash
+npm run build:exe
+# Creates: dist/tally-remote-fetcher.exe
+```
+
+### Build Frontend
+```bash
+cd frontend
+npm run build
+# Creates: frontend/build/
+```
+
+## 🔄 Version History
+
+- **v1.0.0**: Initial production release
+- **v1.1.0**: Added React frontend
+- **v1.2.0**: Enhanced error handling and caching
+- **v1.3.0**: Docker support and deployment options
+
+## 📞 Support
+
+For support and questions:
+- Check this documentation first
+- Review server logs for errors
+- Test with the health endpoint
+- Verify Tally configuration
+
+## 📄 License
+
+MIT License - see LICENSE file for details.

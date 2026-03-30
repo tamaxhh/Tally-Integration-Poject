@@ -25,6 +25,7 @@ const config = require('./config');
 const logger = require('./config/logger');
 const { authMiddleware } = require('./middleware/auth.middleware');
 const { errorHandler } = require('./middleware/errorHandler.middleware');
+const { tallyConnectionSchema } = require('./validators');
 
 // Route handlers
 const healthRoutes = require('./routes/health.routes');
@@ -73,14 +74,17 @@ async function buildServer() {
 
   // CORS — configure which origins can call your API
   await server.register(require('@fastify/cors'), {
-    // In production, set this to your actual frontend domain(s)
-    origin: config.isDev ? true : (process.env.CORS_ORIGIN || false),
+    // Support multiple origins for different environments
+    origin: config.isDev ? 
+      ['http://localhost:3001', 'http://localhost:3000', true] : 
+      (process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : false),
     methods: ['GET', 'POST', 'OPTIONS'],
+    credentials: true,
   });
 
   // Static file serving for frontend (temporarily disabled for Docker debugging)
   // await server.register(require('@fastify/static'), {
-  //   root: path.join(__dirname, '..', 'public'),
+  //   root: path.join(__dirname, '..', 'frontend'),
   //   prefix: '/', // Optional: remove prefix if you want to serve from root
   // });
 
@@ -137,8 +141,12 @@ async function buildServer() {
   
   await server.register(completeDataRoutes, { prefix: API_PREFIX }); // /api/v1/complete-data
 
-  // Frontend API endpoints (no prefix for direct access)
-  server.post('/api/test-connection', async (request, reply) => {
+  // Add test-connection endpoint with API prefix
+  server.post('/api/v1/test-connection', {
+    schema: {
+      body: tallyConnectionSchema
+    }
+  }, async (request, reply) => {
     try {
       console.log('🔍 DEBUG - Request body:', request.body);
       console.log('🔍 DEBUG - Request headers:', request.headers);
@@ -166,10 +174,10 @@ async function buildServer() {
       
       const startTime = Date.now();
       
-      // Test connection to Tally
-      const axios = require('axios');
+      // Test basic connectivity to Tally
       const testXml = `<ENVELOPE><HEADER><TALLYREQUEST>Export Data</TALLYREQUEST></HEADER><BODY><EXPORTDATA><REQUESTDESC><REPORTNAME>List of Companies</REPORTNAME></REQUESTDESC></EXPORTDATA></BODY></ENVELOPE>`;
       
+      const axios = require('axios');
       await axios.post(`http://${tallyUrl}`, testXml, {
         headers: { 'Content-Type': 'text/xml' },
         timeout: 5000
@@ -195,58 +203,39 @@ async function buildServer() {
     }
   });
 
-  server.get('/health', async (request, reply) => {
-    try {
-      const axios = require('axios');
-      const startTime = Date.now();
-      const response = await axios.get(`http://${process.env.TALLY_HOST}:${process.env.TALLY_PORT}`, {
-        headers: { 'Content-Type': 'text/xml' },
-        timeout: 5000
-      });
-      
-      return reply.send({
-        success: true,
-        connected: true,
-        responseTime: Date.now() - startTime,
-        message: 'Successfully connected to Tally',
-        tallyUrl: `${process.env.TALLY_HOST}:${process.env.TALLY_PORT}`
-      });
-    } catch (error) {
-      return reply.code(500).send({
-        success: false,
-        error: error.message,
-        connected: false
-      });
-    }
-  });
-
-  server.get('/api/full-company-data', async (request, reply) => {
-    try {
-      const { company } = request.query;
-      
-      if (!company) {
-        return reply.code(400).send({
-          success: false,
-          error: 'Company name is required'
-        });
+  // Add fetch-tally-data endpoint with API prefix
+  server.post('/api/v1/fetch-tally-data', {
+    schema: {
+      body: {
+        type: 'object',
+        required: ['tallyUrl', 'requestType'],
+        properties: {
+          tallyUrl: {
+            type: 'string',
+            pattern: '^[\\w\\.-]+:[0-9]+$'
+          },
+          requestType: {
+            type: 'string',
+            enum: ['ListOfLedgers', 'LedgerTransactions', 'LedgerDetails', 'TrialBalance']
+          },
+          ledgerName: {
+            type: 'string',
+            minLength: 1,
+            maxLength: 255
+          },
+          from: {
+            type: 'string',
+            pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+          },
+          to: {
+            type: 'string',
+            pattern: '^\\d{4}-\\d{2}-\\d{2}$'
+          }
+        },
+        additionalProperties: false
       }
-      
-      console.log('🔍 DEBUG - Fetching complete company data for:', company);
-      
-      const { getCompleteCompanyData } = require('./services/company.service');
-      const data = await getCompleteCompanyData(company);
-      
-      return reply.send(data);
-    } catch (error) {
-      console.error('❌ ERROR - Failed to fetch company data:', error);
-      return reply.code(500).send({
-        success: false,
-        error: error.message
-      });
     }
-  });
-
-  server.post('/api/fetch-tally-data', async (request, reply) => {
+  }, async (request, reply) => {
     try {
       console.log('🔍 DEBUG - Request body:', request.body);
       console.log('🔍 DEBUG - Request headers:', request.headers);
@@ -278,7 +267,7 @@ async function buildServer() {
         });
       }
       
-      const axios = require('axios');
+      const { sendToTally } = require('./services/connectors/tally.client');
       const XMLParser = require('fast-xml-parser').XMLParser;
       
       let xmlRequest = '';
@@ -425,14 +414,12 @@ async function buildServer() {
       }
       
       const startTime = Date.now();
-      const response = await axios.post(`http://${tallyUrl}`, xmlRequest, {
-        headers: { 'Content-Type': 'text/xml' },
-        timeout: 10000
+      const response = await sendToTally(xmlRequest, {
+        baseURL: `http://${tallyUrl}`
       });
       
-      console.log('🔍 DEBUG - Tally response status:', response.status);
-      console.log('🔍 DEBUG - Tally response length:', response.data.length);
-      console.log('🔍 DEBUG - First 500 chars of response:', response.data.substring(0, 500));
+      console.log('🔍 DEBUG - Tally response length:', response.length);
+      console.log('🔍 DEBUG - First 500 chars of response:', response.substring(0, 500));
       
       const parser = new XMLParser({
         ignoreAttributes: false,
@@ -442,7 +429,7 @@ async function buildServer() {
         trimValues: true,
       });
       
-      const result = parser.parse(response.data);
+      const result = parser.parse(response);
       console.log('🔍 DEBUG - Parsed result keys:', Object.keys(result));
       
       let data = [];
@@ -528,6 +515,39 @@ async function buildServer() {
     }
   });
 
+  // Health check endpoint with Tally connectivity test
+  server.get('/health', async (request, reply) => {
+    try {
+      const { isTallyOnline } = require('./services/connectors/tally.client');
+      const startTime = Date.now();
+      
+      const tallyOnline = await isTallyOnline();
+      const responseTime = Date.now() - startTime;
+      
+      return reply.send({
+        success: true,
+        connected: tallyOnline,
+        responseTime: responseTime,
+        message: tallyOnline ? 'Successfully connected to Tally' : 'Tally is not responding',
+        tallyUrl: `${process.env.TALLY_HOST || 'localhost'}:${process.env.TALLY_PORT || 9000}`
+      });
+    } catch (error) {
+      return reply.code(500).send({
+        success: false,
+        error: error.message,
+      });
+    }
+  });
+
+  // Add WebSocket endpoint to prevent connection errors
+  server.get('/ws', { websocket: true }, (connection, req) => {
+    // Simple WebSocket handling - just close the connection gracefully
+    connection.socket.on('message', message => {
+      // Echo back messages or handle as needed
+      connection.socket.send(JSON.stringify({ type: 'echo', data: message.toString() }));
+    });
+  });
+
   // ============================================================
   // Graceful shutdown
   // ============================================================
@@ -539,11 +559,10 @@ async function buildServer() {
     try {
       await server.close();
       logger.info('Server closed cleanly');
-      process.exit(0);
     } catch (err) {
       logger.error({ err }, 'Error during graceful shutdown');
-      process.exit(1);
     }
+    process.exit(0);
   };
 
   process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));

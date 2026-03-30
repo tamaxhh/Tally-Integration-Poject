@@ -39,6 +39,12 @@ async function authMiddleware(request, reply) {
     return;
   }
 
+  // Skip auth for CORS preflight requests (OPTIONS method)
+  if (request.method === 'OPTIONS') {
+    console.log('✅ AUTH SKIPPED - CORS preflight request');
+    return;
+  }
+
   // Skip auth for static files (HTML, CSS, JS)
   if (request.url.includes('.html') || request.url.includes('.css') || request.url.includes('.js') || request.url.includes('.ico')) {
     console.log('✅ AUTH SKIPPED - static file');

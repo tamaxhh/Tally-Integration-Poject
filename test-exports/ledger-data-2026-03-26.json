@@ -3,404 +3,745 @@
     "success": true,
     "total": 95,
     "company": "Default",
-    "timestamp": "2026-03-26T13:31:44.723Z",
+    "timestamp": "2026-03-26T13:29:07.039Z",
     "tallyHost": "localhost",
-    "tallyPort": "9000",
-    "exportedAt": "2026-03-26T13:31:44.723Z"
+    "tallyPort": "9000"
   },
   "summary": {
     "totalLedgers": 95,
     "withBalances": 95,
-    "withOpeningBalance": 0,
-    "withClosingBalance": 0,
-    "parentGroups": [],
+    "withOpeningBalance": 95,
+    "withClosingBalance": 95,
+    "parentGroups": [
+      "&#4; Primary",
+      "Bank Accounts",
+      "Bank OD A/c",
+      "Capital Account",
+      "Cash-in-Hand",
+      "Current Assets",
+      "Deposits (Asset)",
+      "Direct Expenses",
+      "Duties & Taxes",
+      "Expenses on Purchase",
+      "Fixed Assets",
+      "Indirect Expenses",
+      "Indirect Incomes",
+      "Investments",
+      "Loans & Advances (Asset)",
+      "Loans (Liability)",
+      "Provisions",
+      "Purchase Accounts",
+      "Sales Accounts",
+      "Secured Loans",
+      "Sundry Creditors",
+      "Sundry Debtors"
+    ],
     "balanceSummary": {
-      "totalOpening": 0,
-      "totalClosing": 0,
-      "positiveBalances": 0,
-      "negativeBalances": 0
+      "totalOpening": 1587483,
+      "totalClosing": -1713616.7300000028,
+      "positiveBalances": 26,
+      "negativeBalances": 43
     }
   },
   "ledgers": [
     {
       "name": "Alfa Provisions",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": -27700,
+      "closingBalance": -151912,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000187"
     },
     {
       "name": "Anup and Co",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": -16000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001d6"
     },
     {
       "name": "A to Z Stationers",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": 860,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000017c"
     },
     {
       "name": "AVN Traders",
-      "originalData": {}
+      "parent": "Sundry Creditors",
+      "openingBalance": 50345,
+      "closingBalance": 27681.2,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000171"
     },
     {
       "name": "Bank Charges",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": -24000,
+      "closingBalance": -55000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000167"
     },
     {
       "name": "Bank Interest",
-      "originalData": {}
+      "parent": "Indirect Incomes",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001c9"
     },
     {
       "name": "Bank Loans",
-      "originalData": {}
+      "parent": "Loans (Liability)",
+      "openingBalance": 5734318,
+      "closingBalance": 5734318,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000019d"
     },
     {
       "name": "Bank of Baroda-Savings A/c",
-      "originalData": {}
+      "parent": "Bank Accounts",
+      "openingBalance": -500000,
+      "closingBalance": -3892288.31,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001a9"
     },
     {
       "name": "BMS Mart",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": 0,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000017e"
     },
     {
       "name": "Candles and Matches",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": 24380.97,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000183"
     },
     {
       "name": "Cash",
-      "originalData": {}
+      "parent": "Cash-in-Hand",
+      "openingBalance": -250000,
+      "closingBalance": -128788,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000001f"
     },
     {
       "name": "CGST",
-      "originalData": {}
+      "parent": "Duties & Taxes",
+      "openingBalance": 0,
+      "closingBalance": 114962.15,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000000cd"
     },
     {
       "name": "CGST (Input Tax Credit)",
-      "originalData": {}
+      "parent": "Duties & Taxes",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000191"
     },
     {
       "name": "CGST ITC",
-      "originalData": {}
+      "parent": "Current Assets",
+      "openingBalance": -50000,
+      "closingBalance": -50000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001a6"
     },
     {
       "name": "CGST Payable",
-      "originalData": {}
+      "parent": "Duties & Taxes",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001a2"
     },
     {
       "name": "Commodities",
-      "originalData": {}
+      "parent": "Investments",
+      "openingBalance": -50000,
+      "closingBalance": -50000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001ad"
     },
     {
       "name": "Computer",
-      "originalData": {}
+      "parent": "Fixed Assets",
+      "openingBalance": -50000,
+      "closingBalance": -50000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000163"
     },
     {
       "name": "Confident Traders",
-      "originalData": {}
+      "parent": "Sundry Creditors",
+      "openingBalance": 0,
+      "closingBalance": -22307.6,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000172"
     },
     {
       "name": "Conveyance",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": -21200,
+      "closingBalance": -21200,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000168"
     },
     {
       "name": "DBS Bank A/c",
-      "originalData": {}
+      "parent": "Bank Accounts",
+      "openingBalance": 0,
+      "closingBalance": 13564.8,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001b9"
     },
     {
       "name": "Drawings of Owner",
-      "originalData": {}
+      "parent": "Capital Account",
+      "openingBalance": -500000,
+      "closingBalance": -518000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000160"
     },
     {
       "name": "Ecko Honey Farms",
-      "originalData": {}
+      "parent": "Sundry Creditors",
+      "openingBalance": 20000,
+      "closingBalance": -184746.16,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000179"
     },
     {
       "name": "Electricity Charges",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": -3000,
+      "closingBalance": -13000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000169"
     },
     {
       "name": "Electricity Deposit",
-      "originalData": {}
+      "parent": "Deposits (Asset)",
+      "openingBalance": -10000,
+      "closingBalance": -10000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000162"
     },
     {
       "name": "Express Stores",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": 1400,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000017a"
     },
     {
       "name": "Fright",
-      "originalData": {}
+      "parent": "Expenses on Purchase",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001c3"
     },
     {
       "name": "Furniture",
-      "originalData": {}
+      "parent": "Fixed Assets",
+      "openingBalance": -500000,
+      "closingBalance": -500000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000164"
     },
     {
       "name": "GST Provision",
-      "originalData": {}
+      "parent": "Provisions",
+      "openingBalance": 60000,
+      "closingBalance": 60000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001b0"
     },
     {
       "name": "GST Sales",
-      "originalData": {}
+      "parent": "Sales Accounts",
+      "openingBalance": 0,
+      "closingBalance": 481760,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000000cc"
     },
     {
       "name": "HDFC Current A/c",
-      "originalData": {}
+      "parent": "Bank Accounts",
+      "openingBalance": -40000,
+      "closingBalance": -40000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001aa"
     },
     {
       "name": "HKN Enterprises",
-      "originalData": {}
+      "parent": "Sundry Creditors",
+      "openingBalance": 0,
+      "closingBalance": -1638,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000173"
     },
     {
       "name": "IGST",
-      "originalData": {}
+      "parent": "Duties & Taxes",
+      "openingBalance": 0,
+      "closingBalance": 249578.71,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000018b"
     },
     {
       "name": "IGST (Input Tax Credit)",
-      "originalData": {}
+      "parent": "Duties & Taxes",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000193"
     },
     {
       "name": "IGST ITC",
-      "originalData": {}
+      "parent": "Current Assets",
+      "openingBalance": -150000,
+      "closingBalance": -150000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001a8"
     },
     {
       "name": "IGST Payable",
-      "originalData": {}
+      "parent": "Duties & Taxes",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001a4"
     },
     {
       "name": "Import Purchases",
-      "originalData": {}
+      "parent": "Purchase Accounts",
+      "openingBalance": -5000000,
+      "closingBalance": null,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001a1"
     },
     {
       "name": "Indus Stores",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000017d"
     },
     {
       "name": "Insurance",
-      "originalData": {}
+      "parent": "Direct Expenses",
+      "openingBalance": 0,
+      "closingBalance": "�7.86 @ ? 80.0992/� = ? 629.58",
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001c6"
     },
     {
       "name": "K. L. Stores",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": -26400,
+      "closingBalance": -36000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000186"
     },
     {
       "name": "Land and Building",
-      "originalData": {}
+      "parent": "Fixed Assets",
+      "openingBalance": -55200000,
+      "closingBalance": -55200000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000165"
     },
     {
       "name": "Maruthi Van",
-      "originalData": {}
+      "parent": "Fixed Assets",
+      "openingBalance": -1300000,
+      "closingBalance": -1300000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000166"
     },
     {
       "name": "MM Frozen Foods",
-      "originalData": {}
+      "parent": "Sundry Creditors",
+      "openingBalance": 21200,
+      "closingBalance": "$0.00 @ ? /$ = ? 45330.40",
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000178"
     },
     {
       "name": "Office Supply Account",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001c8"
     },
     {
       "name": "Owner's Capital",
-      "originalData": {}
+      "parent": "Capital Account",
+      "openingBalance": 60000000,
+      "closingBalance": 60018000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000015f"
     },
     {
       "name": "Packing Charges",
-      "originalData": {}
+      "parent": "Direct Expenses",
+      "openingBalance": 0,
+      "closingBalance": "�22.50 @ ? 257.7244/� = ? 5798.80",
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001c5"
     },
     {
       "name": "Packing Cost",
-      "originalData": {}
+      "parent": "Expenses on Purchase",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001c2"
     },
     {
       "name": "Printing & Stationary",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": -2444,
+      "closingBalance": -31734,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000016a"
     },
     {
       "name": "Profit & Loss A/c",
-      "originalData": {}
+      "parent": "&#4; Primary",
+      "openingBalance": 0,
+      "closingBalance": -5434486.35,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000001e"
     },
     {
       "name": "Purchase",
-      "originalData": {}
+      "parent": "Purchase Accounts",
+      "openingBalance": -10000000,
+      "closingBalance": -11076017.33,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000190"
     },
     {
       "name": "Purchase Exempt",
-      "originalData": {}
+      "parent": "Purchase Accounts",
+      "openingBalance": -25000,
+      "closingBalance": -130812.58,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001a0"
     },
     {
       "name": "Purchase Returns",
-      "originalData": {}
+      "parent": "Purchase Accounts",
+      "openingBalance": 50000,
+      "closingBalance": 50000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000019e"
     },
     {
       "name": "Purchase under RCM",
-      "originalData": {}
+      "parent": "Purchase Accounts",
+      "openingBalance": -500000,
+      "closingBalance": -664576.98,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000019f"
     },
     {
       "name": "Ramesh's Capital A/c",
-      "originalData": {}
+      "parent": "Capital Account",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001dc"
     },
     {
       "name": "Refrigeration Cost",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001c7"
     },
     {
       "name": "Rent",
-      "originalData": {}
+      "parent": "Direct Expenses",
+      "openingBalance": 0,
+      "closingBalance": -600000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001ca"
     },
     {
       "name": "Rent",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": -200000,
+      "closingBalance": -200000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000016b"
     },
     {
       "name": "Rent Advance",
-      "originalData": {}
+      "parent": "Loans & Advances (Asset)",
+      "openingBalance": -100000,
+      "closingBalance": -100000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001ae"
     },
     {
       "name": "Retail Mart",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000017b"
     },
     {
       "name": "Rounding Off",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": -25,
+      "closingBalance": -25,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000016c"
     },
     {
       "name": "RV Stores",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": 0,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000017f"
     },
     {
       "name": "Sai Farms",
-      "originalData": {}
+      "parent": "Sundry Creditors",
+      "openingBalance": 20000,
+      "closingBalance": 20000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000177"
     },
     {
       "name": "Salary Account",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": -150000,
+      "closingBalance": -150000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000016d"
     },
     {
       "name": "Salary Advance",
-      "originalData": {}
+      "parent": "Loans & Advances (Asset)",
+      "openingBalance": -25000,
+      "closingBalance": -25000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001af"
     },
     {
       "name": "Sales",
-      "originalData": {}
+      "parent": "Sales Accounts",
+      "openingBalance": 7600000,
+      "closingBalance": 9926240.6,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000189"
     },
     {
       "name": "Sales Commission",
-      "originalData": {}
+      "parent": "Direct Expenses",
+      "openingBalance": -45000,
+      "closingBalance": -45000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001ac"
     },
     {
       "name": "Sales East",
-      "originalData": {}
+      "parent": "Sales Accounts",
+      "openingBalance": 0,
+      "closingBalance": 9600,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001d9"
     },
     {
       "name": "Sales Exempt",
-      "originalData": {}
+      "parent": "Sales Accounts",
+      "openingBalance": 5000,
+      "closingBalance": 2461000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000018d"
     },
     {
       "name": "Sales Export",
-      "originalData": {}
+      "parent": "Sales Accounts",
+      "openingBalance": 3000000,
+      "closingBalance": "�449.70 @ ? 6751.1141/� = ? 3035976.00",
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000018e"
     },
     {
       "name": "Sales Nil Rated",
-      "originalData": {}
+      "parent": "Sales Accounts",
+      "openingBalance": 2000,
+      "closingBalance": 196480,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000018c"
     },
     {
       "name": "Sales North",
-      "originalData": {}
+      "parent": "Sales Accounts",
+      "openingBalance": 0,
+      "closingBalance": 2100,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001d7"
     },
     {
       "name": "Sales Return",
-      "originalData": {}
+      "parent": "Sales Accounts",
+      "openingBalance": -3500,
+      "closingBalance": -3500,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000018f"
     },
     {
       "name": "Sales South",
-      "originalData": {}
+      "parent": "Sales Accounts",
+      "openingBalance": 0,
+      "closingBalance": 7000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001d8"
     },
     {
       "name": "Sales West",
-      "originalData": {}
+      "parent": "Sales Accounts",
+      "openingBalance": 0,
+      "closingBalance": 5600,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001da"
     },
     {
       "name": "Salt and Pepper",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": 1155,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000184"
     },
     {
       "name": "SBI OD A/c",
-      "originalData": {}
+      "parent": "Bank OD A/c",
+      "openingBalance": 75000,
+      "closingBalance": 75000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001ab"
     },
     {
       "name": "Secured Loan from Ganeshji",
-      "originalData": {}
+      "parent": "Secured Loans",
+      "openingBalance": 60000,
+      "closingBalance": 60000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001a5"
     },
     {
       "name": "SGST",
-      "originalData": {}
+      "parent": "Duties & Taxes",
+      "openingBalance": 0,
+      "closingBalance": 114962.15,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000018a"
     },
     {
       "name": "SGST (Input Tax Credit)",
-      "originalData": {}
+      "parent": "Duties & Taxes",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000192"
     },
     {
       "name": "SGST ITC",
-      "originalData": {}
+      "parent": "Current Assets",
+      "openingBalance": -50000,
+      "closingBalance": -50000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001a7"
     },
     {
       "name": "SGST Payable",
-      "originalData": {}
+      "parent": "Duties & Taxes",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001a3"
     },
     {
       "name": "SLV Enterprises",
-      "originalData": {}
+      "parent": "Sundry Creditors",
+      "openingBalance": 0,
+      "closingBalance": -9628,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000174"
     },
     {
       "name": "S.M Traders",
-      "originalData": {}
+      "parent": "Sundry Creditors",
+      "openingBalance": 0,
+      "closingBalance": -1537,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000175"
     },
     {
       "name": "Sunday to Monday",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": -122600,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000180"
     },
     {
       "name": "Sundry Expenses",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": -23400,
+      "closingBalance": -202850,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000016e"
     },
     {
       "name": "Sun Stores",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": 2750,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000182"
     },
     {
       "name": "SuperFoods",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": 0,
+      "closingBalance": 118530,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000181"
     },
     {
       "name": "Telephone Bill",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": -2223,
+      "closingBalance": -5223,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-0000016f"
     },
     {
       "name": "Telephone Deposit",
-      "originalData": {}
+      "parent": "Deposits (Asset)",
+      "openingBalance": -5000,
+      "closingBalance": -2000,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000161"
     },
     {
       "name": "Titan Stores",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": -250432,
+      "closingBalance": -241970,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000185"
     },
     {
       "name": "Transportation",
-      "originalData": {}
+      "parent": "Expenses on Purchase",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001c0"
     },
     {
       "name": "Transportation Charges",
-      "originalData": {}
+      "parent": "Direct Expenses",
+      "openingBalance": 0,
+      "closingBalance": "�22.50 @ ? 168.8356/� = ? 3798.80",
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001c4"
     },
     {
       "name": "Transports",
-      "originalData": {}
+      "parent": "Direct Expenses",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-000001c1"
     },
     {
       "name": "VKN Transports",
-      "originalData": {}
+      "parent": "Sundry Creditors",
+      "openingBalance": 0,
+      "closingBalance": {
+        "@_TYPE": "Amount"
+      },
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000176"
     },
     {
       "name": "Water Bill Charges",
-      "originalData": {}
+      "parent": "Indirect Expenses",
+      "openingBalance": -500,
+      "closingBalance": -2700,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000170"
     },
     {
       "name": "Zeta Provisions",
-      "originalData": {}
+      "parent": "Sundry Debtors",
+      "openingBalance": -25556,
+      "closingBalance": null,
+      "guid": "4f3f4b54-ded8-4f7d-9d4e-4b3b175d09d9-00000188"
     }
   ]
 }
