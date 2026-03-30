@@ -266,7 +266,7 @@ const Ledgers = () => {
                       {index + 1}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {ledger}
+                      {typeof ledger === 'string' ? ledger : ledger?.name || 'Unnamed Ledger'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <button className="text-primary-600 hover:text-primary-900 flex items-center">

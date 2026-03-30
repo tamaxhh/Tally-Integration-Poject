@@ -20,7 +20,7 @@ export const ApiProvider = ({ children }) => {
 
   const api = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 10000,
+    timeout: 60000,
     headers: {
       'Content-Type': 'application/json',
       'X-API-Key': 'dev-key-local-only'
@@ -64,7 +64,7 @@ export const ApiProvider = ({ children }) => {
         // Use absolute URL for health check since it's at root level
         const healthApi = axios.create({
           baseURL: API_BASE_URL.replace('/api/v1', ''), // Remove /api/v1 prefix
-          timeout: 10000,
+          timeout: 60000,
           headers: {
             'Content-Type': 'application/json',
             'X-API-Key': 'dev-key-local-only'
