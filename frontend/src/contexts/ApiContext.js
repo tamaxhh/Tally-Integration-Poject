@@ -88,8 +88,16 @@ export const ApiProvider = ({ children }) => {
     },
 
     // Vouchers
-    getVouchers: async () => {
-      const response = await api.get('/vouchers');
+    getVouchers: async (params = {}) => {
+      // Set default date range if not provided
+      const today = new Date().toISOString().split('T')[0];
+      const queryParams = {
+        fromDate: params.fromDate || today,
+        toDate: params.toDate || today,
+        ...params
+      };
+      
+      const response = await api.get('/vouchers', { params: queryParams });
       return response.data;
     },
 
